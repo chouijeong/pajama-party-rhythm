@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ぱじゃまパーティ♡ × Chiikawa Cheer Rhythm</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg-decor" aria-hidden="true">
+    <span>🎀</span><span>⭐</span><span>💕</span><span>🎵</span>
+    <span>✨</span><span>🌸</span><span>🎀</span><span>⭐</span>
+  </div>
+
+  <div id="app">
+    <header class="topbar">
+      <h1>
+        <span class="title-jp">ぱじゃまパーティ♡</span>
+        <span class="title-sub">Chiikawa Cheer Rhythm</span>
+      </h1>
+      <div class="difficulty">
+        <button class="diff-btn active" data-diff="easy">이지 · 응원</button>
+        <button class="diff-btn" data-diff="normal">노멀 · 오리지널</button>
+        <button class="diff-btn" data-diff="hard">하드 · 마스터</button>
+      </div>
+      <div class="score-display">
+        <div class="score-item"><span class="label">SCORE</span><span id="score">0</span></div>
+        <div class="score-item"><span class="label">COMBO</span><span id="combo">0</span></div>
+      </div>
+    </header>
+
+    <main class="stage">
+      <section class="video-area">
+        <div class="video-wrap">
+          <video id="player" src="pajama-party.mp4" playsinline preload="auto"></video>
+          <canvas id="effects-canvas"></canvas>
+          <div id="judgement"></div>
+          <div id="cheer-overlay">
+            <div class="cheer-row">
+              <span>🎉</span><span>🎀</span><span>💕</span><span>⭐</span><span>🎵</span><span>🎀</span><span>💕</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="rhythm-area">
+        <div class="lyric-display">
+          <div class="lyric-label">♪ NOW PLAYING ♪</div>
+          <div id="current-lyric">START 버튼을 눌러 파티를 시작해줘!</div>
+        </div>
+
+        <div class="note-lane">
+          <div class="hit-zone">
+            <span class="zone-emoji-l">✨</span>
+            <span class="zone-label">HIT!</span>
+            <span class="zone-emoji-r">✨</span>
+          </div>
+          <div id="notes-container"></div>
+          <div class="lane-guide">
+            <div class="guide-item"><span class="badge clap">👏</span><span>박수 / Clap</span></div>
+            <div class="guide-item"><span class="badge hold">✊</span><span>주먹 / Hold</span></div>
+            <div class="guide-item"><span class="badge release">✋</span><span>손펴기 / Open</span></div>
+          </div>
+        </div>
+
+        <div class="webcam-preview">
+          <video id="webcam" autoplay muted playsinline></video>
+          <canvas id="hands-canvas"></canvas>
+          <div class="gesture-status">
+            <span id="gesture-text">대기중</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="controls">
+      <button id="start-btn">▶ START</button>
+      <button id="reset-btn">↺ RESET</button>
+      <div class="hint">키보드: <kbd>Space</kbd>=박수 <kbd>F</kbd>=주먹 <kbd>R</kbd>=손펴기</div>
+    </div>
+
+    <div id="loading">
+      <div class="loading-content">
+        <div class="loader">🎀</div>
+        <h2>웹캠 & 손 인식 준비중...</h2>
+        <p>브라우저에서 카메라 권한을 허용해주세요.</p>
+        <p class="loading-hint">(권한이 없어도 키보드로 플레이 가능)</p>
+        <button id="skip-cam">웹캠 없이 시작</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/hands.js" crossorigin="anonymous"></script>
+  <script src="app.js"></script>
+</body>
+</html>
