@@ -33,11 +33,28 @@
       <section class="video-area">
         <div class="video-wrap">
           <video id="player" src="pajama-party.mp4" playsinline preload="auto"></video>
+
+          <div class="rhythm-overlay">
+            <div class="hit-zone">
+              <span class="zone-emoji-l">✨</span>
+              <span class="zone-label">HIT!</span>
+              <span class="zone-emoji-r">✨</span>
+            </div>
+            <div id="notes-container"></div>
+          </div>
+
           <canvas id="effects-canvas"></canvas>
           <div id="judgement"></div>
+
           <div id="cheer-overlay">
             <div class="cheer-row">
-              <span>🎉</span><span>🎀</span><span>💕</span><span>⭐</span><span>🎵</span><span>🎀</span><span>💕</span>
+              <span class="cheerleader">🐰</span>
+              <span class="cheerleader">🐱</span>
+              <span class="cheerleader">🐻</span>
+              <span class="cheerleader">🐹</span>
+              <span class="cheerleader">🐶</span>
+              <span class="cheerleader">🦊</span>
+              <span class="cheerleader">🐯</span>
             </div>
           </div>
         </div>
@@ -49,18 +66,10 @@
           <div id="current-lyric">START 버튼을 눌러 파티를 시작해줘!</div>
         </div>
 
-        <div class="note-lane">
-          <div class="hit-zone">
-            <span class="zone-emoji-l">✨</span>
-            <span class="zone-label">HIT!</span>
-            <span class="zone-emoji-r">✨</span>
-          </div>
-          <div id="notes-container"></div>
-          <div class="lane-guide">
-            <div class="guide-item"><span class="badge clap">👏</span><span>박수 / Clap</span></div>
-            <div class="guide-item"><span class="badge hold">✊</span><span>주먹 / Hold</span></div>
-            <div class="guide-item"><span class="badge release">✋</span><span>손펴기 / Open</span></div>
-          </div>
+        <div class="lane-guide">
+          <div class="guide-item"><span class="badge clap">👏</span><span>박수 / Clap</span></div>
+          <div class="guide-item"><span class="badge hold">✊</span><span>주먹 / Hold</span></div>
+          <div class="guide-item"><span class="badge release">✋</span><span>손펴기 / Open</span></div>
         </div>
 
         <div class="webcam-preview">

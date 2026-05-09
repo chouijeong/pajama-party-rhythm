@@ -5,7 +5,7 @@
 
 // ====== Configuration ======
 const NOTE_TRAVEL_TIME = 2200;          // ms — note flight from spawn to hit zone
-const HIT_ZONE_CENTER_Y = 70;           // px from top of lane (30 + 40)
+const HIT_ZONE_CENTER_X = 66;           // px from left of overlay (14 + 104/2)
 const J_PERFECT = 110;                  // ±ms windows
 const J_GREAT = 220;
 const J_GOOD = 360;
@@ -276,6 +276,9 @@ function resetGame() {
   document.getElementById('score').textContent = '0';
   document.getElementById('combo').textContent = '0';
   document.getElementById('current-lyric').textContent = 'START 버튼을 눌러 파티를 시작해줘!';
+  const row = document.querySelector('.cheer-row');
+  if (row) row.classList.remove('glaring');
+  if (glareTimeout) { clearTimeout(glareTimeout); glareTimeout = null; }
 }
 
 function clearActiveNotes() {
@@ -314,15 +317,16 @@ function spawnNote(data) {
 }
 
 function updateNotes(currentTime) {
-  const lane = document.querySelector('.note-lane');
-  const laneH = lane.clientHeight;
+  const overlay = document.querySelector('.rhythm-overlay');
+  if (!overlay) return;
+  const overlayW = overlay.clientWidth;
 
   for (let i = activeNotes.length - 1; i >= 0; i--) {
     const n = activeNotes[i];
     const dt = n.data.t - currentTime;            // ms remaining until hit
-    const progress = 1 - (dt / NOTE_TRAVEL_TIME); // 0 at spawn → 1 at hit
-    const y = laneH - progress * (laneH - HIT_ZONE_CENTER_Y);
-    n.el.style.top = `${y}px`;
+    const progress = 1 - (dt / NOTE_TRAVEL_TIME); // 0 at spawn → 1 at hit zone
+    const x = overlayW - progress * (overlayW - HIT_ZONE_CENTER_X);
+    n.el.style.left = `${x}px`;
 
     if (!n.hit && dt < -J_GOOD) {
       n.hit = true;
@@ -331,16 +335,29 @@ function updateNotes(currentTime) {
       showJudgement('MISS', '#7a7a7a');
       n.el.style.opacity = '0.3';
       n.el.style.filter = 'grayscale(1)';
+      triggerGlare();
       setTimeout(() => n.el.remove(), 250);
       activeNotes.splice(i, 1);
     } else if (n.hit && dt < -J_GOOD) {
       n.el.remove();
       activeNotes.splice(i, 1);
-    } else if (y < -100) {
+    } else if (x < -100) {
       n.el.remove();
       activeNotes.splice(i, 1);
     }
   }
+}
+
+// ====== Cheering squad glare reaction (on MISS) ======
+let glareTimeout = null;
+function triggerGlare() {
+  const row = document.querySelector('.cheer-row');
+  if (!row) return;
+  row.classList.add('glaring');
+  if (glareTimeout) clearTimeout(glareTimeout);
+  glareTimeout = setTimeout(() => {
+    row.classList.remove('glaring');
+  }, 1500);
 }
 
 function handleGesture(type) {
@@ -410,12 +427,21 @@ window.addEventListener('resize', fitCanvas);
 
 const PARTY_COLORS = ['#ff8fab', '#f06292', '#ffd966', '#ffe27a',
                       '#b8e0d2', '#7ec8e3', '#ffb6c1', '#ffec5c'];
-const PARTY_SHAPES = ['confetti', 'star', 'heart', 'circle'];
+
+// Bias the burst toward 하트 ♡ and ⭐ (heart/star), with confetti/circle as accents.
+function pickPartyShape() {
+  const r = Math.random();
+  if (r < 0.45) return 'heart';
+  if (r < 0.85) return 'star';
+  if (r < 0.95) return 'confetti';
+  return 'circle';
+}
 
 function triggerPartyEffect(count) {
   if (effectsCanvas.width === 0) fitCanvas();
   const w = effectsCanvas.width, h = effectsCanvas.height;
   for (let i = 0; i < count; i++) {
+    const shape = pickPartyShape();
     particles.push({
       x: w / 2 + (Math.random() - 0.5) * w * 0.6,
       y: h / 2 + (Math.random() - 0.2) * h * 0.4,
@@ -424,9 +450,11 @@ function triggerPartyEffect(count) {
       gravity: 0.28,
       rot: Math.random() * Math.PI * 2,
       vr: (Math.random() - 0.5) * 0.25,
-      size: 8 + Math.random() * 14,
+      size: (shape === 'heart' || shape === 'star')
+        ? 12 + Math.random() * 18
+        : 8 + Math.random() * 12,
       color: PARTY_COLORS[(Math.random() * PARTY_COLORS.length) | 0],
-      shape: PARTY_SHAPES[(Math.random() * PARTY_SHAPES.length) | 0],
+      shape,
       life: 110 + (Math.random() * 40) | 0,
     });
   }
