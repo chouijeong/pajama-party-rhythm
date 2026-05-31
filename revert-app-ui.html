@@ -54,6 +54,148 @@ body::before{display:none;}
 .ui-canvas .side-caption.show{opacity:1 !important;}
 .ui-canvas .side-hint{opacity:0 !important;}
 .ui-canvas .side-hint.show{opacity:1 !important;}
+
+/* ============================================================
+   REVERT UI REDESIGN LAYER  (ref: Airly — hierarchy & soft cards)
+   Appended last → wins on cascade order. Visual-only:
+   surfaces, radii, type scale, spacing, focal accent.
+   Brand stays dark / night-city.
+   ============================================================ */
+:root{
+  --r-surface:        rgba(24,24,28,0.96);
+  --r-surface-top:    rgba(30,30,35,0.96);
+  --r-surface-line:   rgba(255,255,255,0.10);
+  --r-surface-line-2: rgba(255,255,255,0.06);
+  --r-card-shadow: 0 18px 40px -16px rgba(0,0,0,0.75), 0 2px 0 rgba(255,255,255,0.03) inset;
+  --r-radius: 24px;
+}
+
+/* ---- 1. Unified soft, lifted card surface ---------------- */
+.ui-canvas .scan-bottom,
+.ui-canvas .replay-controls,
+.ui-canvas .emotion-log,
+.ui-canvas .feed-card,
+.ui-canvas .summary-pill{
+  background:linear-gradient(180deg,var(--r-surface-top),var(--r-surface)) !important;
+  border:1px solid var(--r-surface-line) !important;
+  box-shadow:var(--r-card-shadow) !important;
+}
+.ui-canvas .scan-bottom{border-radius:var(--r-radius) !important;padding:18px 18px 16px !important;}
+.ui-canvas .replay-controls{border-radius:22px !important;padding:16px 18px !important;}
+.ui-canvas .feed-card{border-radius:22px !important;}
+.ui-canvas .summary-pill{border-radius:16px !important;padding:12px 12px 13px !important;}
+.ui-canvas .emotion-log{border-radius:16px !important;padding:11px 13px !important;}
+.ui-canvas .atlas-card{
+  border-radius:26px !important;
+  background:linear-gradient(180deg,var(--r-surface-top),var(--r-surface)) !important;
+  border:1px solid var(--r-surface-line) !important;
+}
+
+/* ---- 2. Eyebrows: quiet, consistent micro-label ---------- */
+.ui-canvas .route-detected,
+.ui-canvas .today-greet,
+.ui-canvas .replay-date,
+.ui-canvas .map-title-block .small,
+.ui-canvas .explore-title-block .small{
+  font-size:9px !important;letter-spacing:0.28em !important;
+  text-transform:uppercase;font-weight:500 !important;opacity:0.95;
+}
+
+/* ---- 3. Titles: confident hero typography ---------------- */
+.ui-canvas .scan-title{font-size:30px !important;font-weight:600 !important;letter-spacing:-0.02em !important;margin-bottom:14px !important;}
+.ui-canvas .map-title-block .big,
+.ui-canvas .explore-title-block .big{font-size:30px !important;font-weight:600 !important;letter-spacing:-0.02em !important;}
+.ui-canvas .today-q{font-size:31px !important;font-weight:600 !important;letter-spacing:-0.025em !important;line-height:1.04 !important;}
+.ui-canvas .replay-title{font-size:27px !important;font-weight:600 !important;letter-spacing:-0.02em !important;}
+.ui-canvas .card-name{font-size:21px !important;font-weight:600 !important;letter-spacing:-0.02em !important;line-height:1.08 !important;}
+.ui-canvas .atlas-card-name{font-size:22px !important;font-weight:600 !important;}
+.ui-canvas .feed-img-overlay .route-name{font-size:22px !important;font-weight:600 !important;}
+
+/* ---- 4. Hero numbers: big numeral + demoted unit --------- */
+.ui-canvas .summary-pill .val{
+  font-family:'Pretendard Variable',Pretendard,sans-serif !important;
+  font-size:20px !important;font-weight:600 !important;letter-spacing:-0.02em !important;
+  line-height:1 !important;margin-top:2px;white-space:nowrap !important;
+}
+.ui-canvas .summary-pill .lbl{font-size:8px !important;letter-spacing:0.2em !important;text-transform:uppercase;}
+.ui-canvas .summary-pill .val.hi{color:var(--accent) !important;}
+
+.ui-canvas .scan-metric .val{
+  font-family:'Pretendard Variable',Pretendard,sans-serif !important;
+  font-size:15px !important;font-weight:600 !important;letter-spacing:-0.01em !important;
+}
+.ui-canvas .scan-metric .label{font-size:7.5px !important;letter-spacing:0.18em !important;text-transform:uppercase;}
+.ui-canvas .scan-metrics{gap:14px 12px !important;padding-top:14px !important;}
+
+.ui-canvas .card-stat .val{
+  font-family:'Pretendard Variable',Pretendard,sans-serif !important;
+  font-size:16px !important;font-weight:600 !important;
+}
+.ui-canvas .card-stat .lbl{font-size:7.5px !important;letter-spacing:0.18em !important;text-transform:uppercase;}
+
+.ui-canvas .feed-data .val{
+  font-family:'Pretendard Variable',Pretendard,sans-serif !important;
+  font-size:15px !important;font-weight:600 !important;
+}
+.ui-canvas .feed-data .lbl{font-size:7px !important;letter-spacing:0.18em !important;text-transform:uppercase;}
+
+/* ---- 5. Pills & chips: softer, rounder ------------------- */
+.ui-canvas .map-stat-pill,
+.ui-canvas .card-tag,
+.ui-canvas .card-alt{
+  border-radius:100px !important;padding:6px 12px !important;
+  background:rgba(0,0,0,0.55) !important;backdrop-filter:blur(6px);
+}
+.ui-canvas .filter-chip{
+  border-radius:100px !important;padding:7px 14px !important;font-size:9px !important;
+  border-color:var(--r-surface-line) !important;
+}
+.ui-canvas .filter-chip.active{border-color:var(--accent) !important;}
+.ui-canvas .atag,
+.ui-canvas .atlas-card-tags .atag{
+  padding:4px 9px !important;font-size:8.5px !important;
+  background:rgba(183,247,1,0.10) !important;border-color:rgba(183,247,1,0.35) !important;
+}
+.ui-canvas .atmo-tag-mini{padding:3px 8px !important;font-size:7.5px !important;}
+
+/* ---- 6. Lime focal: scan CTA reads as a real button ------ */
+.ui-canvas .scan-cta{
+  margin-top:14px !important;padding:11px 14px !important;border-top:none !important;
+  background:var(--accent) !important;color:#050505 !important;border-radius:14px !important;
+  font-weight:700 !important;letter-spacing:0.18em !important;font-size:9.5px !important;
+  box-shadow:0 6px 18px -6px rgba(183,247,1,0.5) !important;
+}
+.ui-canvas .scan-cta .arrow{font-size:15px !important;}
+.ui-canvas .scan-bottom:hover .scan-cta{background:var(--accent-bright) !important;}
+
+/* ---- 7. Tab bar: cleaner, lighter ground ---------------- */
+.ui-canvas .tab-bar{
+  background:linear-gradient(180deg,rgba(5,5,5,0) 0%,rgba(8,8,11,0.95) 35%,rgba(8,8,11,1) 100%) !important;
+  border-top:1px solid var(--r-surface-line-2) !important;
+}
+.ui-canvas .tab-icon{border-radius:14px !important;}
+.ui-canvas .tab-item.active .tab-icon{box-shadow:0 6px 18px -4px rgba(183,247,1,0.5) !important;}
+.ui-canvas .tab-label{letter-spacing:0.14em !important;}
+
+/* ---- 8. Replay summary: even 3-up rhythm ---------------- */
+.ui-canvas .replay-summary{gap:10px !important;}
+.ui-canvas .emotion-tag{font-size:7.5px !important;letter-spacing:0.2em !important;}
+.ui-canvas .emotion-val{font-size:8.5px !important;}
+
+/* ---- 9. Feed: clearer card internals -------------------- */
+.ui-canvas .feed-username{font-size:11px !important;white-space:nowrap !important;}
+.ui-canvas .feed-username .dim{font-size:9px !important;}
+.ui-canvas .feed-user{min-width:0 !important;flex:1 1 auto !important;}
+.ui-canvas .feed-time{flex:0 0 auto !important;white-space:nowrap !important;margin-left:8px;}
+.ui-canvas .feed-data-row{padding:12px 14px 0 !important;}
+.ui-canvas .feed-actions{padding:11px 14px !important;}
+
+/* ---- 10. Phone frame: a touch softer glow --------------- */
+.ui-canvas .phone{
+  box-shadow:0 0 0 1px rgba(255,255,255,0.08),0 0 0 2px #0d0d0d,
+    0 0 90px rgba(183,247,1,0.06),0 50px 110px -30px rgba(0,0,0,0.95) !important;
+}
+
 </style></head><body>
 <div class="ui-viewport"><div class="ui-canvas" id="uiCanvas">
 <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div><div class="top-bar"><div class="brand-mini"><svg class="brand-mini-logo" role="img" aria-label="REVERT" width="476" height="368" style="height: 26px; width: auto; display: block;" viewBox="0 0 476 368" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M475.878 276.556H394.273L235.216 178.779L336.006 150.228L304.336 88.6247C241.43 163.838 171.026 216.718 47.3379 276.556C145.752 210.531 258.502 91.2603 312.689 0L401.922 173.558L337.742 191.741L475.878 276.556Z" fill="#B7F701"/><path d="M228.148 366.249H208.212L189.011 316.989L186.861 311.437H209.957L222.642 346.021L244.598 311.437H264.098L228.148 366.249Z" fill="white"/><path d="M74.2373 341.963L96.002 366.249H66.6363L44.9671 336.261H67.0142L73.6683 325.792H31.1436L44.9671 336.261L26.9073 366.249H0L34.0826 311.437H107.134L86.9764 341.963H74.2373Z" fill="white"/><path d="M379.67 341.963L401.864 366.249H371.914L349.818 336.261H372.304L379.085 325.792H335.472L349.818 336.261L331.401 366.249H303.963L338.718 311.437H391.58L403.623 325.681L392.656 341.963H379.67Z" fill="white"/><path d="M110.683 351.091H229.218L218.775 366.249H105.682L92.1855 351.372L105.845 331.368H165.469L155.449 345.789H113.785L110.683 351.091Z" fill="white"/><path d="M169.42 326.385H109.625L119.419 311.437H179.387L169.42 326.385Z" fill="white"/><path d="M245.877 351.986H304.256L294.816 367.137H236.49L245.877 351.986Z" fill="white"/><path d="M317.22 331.183L307.78 346.333H249.379L258.766 331.183H317.22Z" fill="white"/><path d="M329.941 310.765L320.743 325.529H262.271L271.417 310.765H329.941Z" fill="white"/><path d="M465.609 327.149H441.721L448.659 334.397L425.384 366.249H401.129L430.663 327.149H412.252L401.129 311.437H475.874L465.609 327.149Z" fill="white"/></svg><div class="name">REVERT</div></div><div class="progress-meta"><span class="dot"></span><span>라이브 데모</span><span>·</span><span class="current" id="screenLabel">01 SCAN</span></div></div><div class="progress-dots" id="progressDots"><div class="pdot active" data-screen="0"></div><div class="pdot" data-screen="1"></div><div class="pdot" data-screen="2"></div><div class="pdot" data-screen="3"></div><div class="pdot" data-screen="4"></div></div><div class="side-caption show" id="sideCaption"><div class="tag" id="capTag">화면 01 / 스캔</div><div class="head" id="capHead">도시 구조를 <em>읽다</em>.</div><div class="body" id="capBody">카메라가 도시의 수직 흐름을 감지하고, 숨겨진 루트를 신호로 시각화합니다.</div></div><div class="side-hint show" id="sideHint"><div class="lbl">인터랙션 <span>·</span> 클릭</div><div class="hint-list"><div class="hint-item">루트 저장 <span class="arrow">→</span></div><div class="hint-item">아틀라스로 이동</div></div></div><div class="stage"><div class="phone"><div class="screen-wrap"><div class="panel active" data-panel="scan"><div class="scan-bg"></div><div class="atmo-fog"></div><div class="status-bar"><span>9:41</span><div class="status-icons"><svg width="16" height="10" viewBox="0 0 14 9" fill="none"><path d="M1 8h1M3.5 6.5h1M6 5h1M8.5 3.5h1M11 2h1M1 8V8M3.5 8V6.5M6 8V5M8.5 8V3.5M11 8V2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><svg width="24" height="11" viewBox="0 0 22 10" fill="none"><rect x="0.5" y="0.5" width="18" height="9" rx="2" stroke="currentColor" stroke-opacity="0.5"/><rect x="2" y="2" width="15" height="6" rx="1" fill="currentColor"/></svg></div></div><svg class="scan-svg" viewBox="0 0 300 600" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="s1-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a1a22"/><stop offset="100%" stop-color="#0a0a10"/></linearGradient><linearGradient id="s1-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0e0e16"/><stop offset="100%" stop-color="#020203"/></linearGradient><linearGradient id="s1-b" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#15151c"/><stop offset="100%" stop-color="#040406"/></linearGradient><linearGradient id="s1-c" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0a0a12"/><stop offset="100%" stop-color="#020204"/></linearGradient></defs><rect width="300" height="600" fill="url(#s1-sky)"/><rect x="0" y="380" width="40" height="220" fill="#08080c"/><rect x="260" y="340" width="40" height="260" fill="#08080c"/><polygon points="30,160 110,140 110,600 30,600" fill="url(#s1-b)"/><polygon points="200,180 290,200 290,600 200,600" fill="url(#s1-c)"/><polygon points="100,40 210,60 210,600 100,600" fill="url(#s1-a)"/><g opacity="0.4" stroke="#3a3a45" stroke-width="0.3"><line x1="105" y1="120" x2="207" y2="135"/><line x1="105" y1="180" x2="207" y2="191"/><line x1="103" y1="240" x2="208" y2="249"/><line x1="103" y1="300" x2="208" y2="306"/><line x1="102" y1="360" x2="208" y2="363"/><line x1="102" y1="420" x2="209" y2="422"/><line x1="101" y1="480" x2="209" y2="481"/><line x1="101" y1="540" x2="209" y2="540"/><line x1="130" y1="50" x2="130" y2="600"/><line x1="155" y1="54" x2="155" y2="600"/><line x1="180" y1="58" x2="180" y2="600"/></g><rect x="142" y="183" width="16" height="8" fill="#1a1a20" opacity="0.6"/><rect x="184" y="305" width="14" height="8" fill="#1a1a20" opacity="0.6"/><rect x="148" y="425" width="14" height="8" fill="#1a1a20" opacity="0.6"/><rect x="165" y="505" width="16" height="8" fill="#1a1a20" opacity="0.6"/><g class="glow"><line x1="100" y1="40" x2="100" y2="600" stroke="#B7F701" stroke-width="0.7" opacity="0.85"/><line x1="210" y1="60" x2="210" y2="600" stroke="#B7F701" stroke-width="0.7" opacity="0.6"/><line x1="100" y1="40" x2="210" y2="60" stroke="#B7F701" stroke-width="0.5" opacity="0.7"/><circle cx="100" cy="40" r="2" fill="#B7F701"/><circle cx="210" cy="60" r="2" fill="#B7F701"/><circle cx="100" cy="200" r="1.5" fill="#B7F701"/><circle cx="100" cy="360" r="1.5" fill="#B7F701"/><circle cx="100" cy="500" r="1.5" fill="#B7F701"/><circle cx="210" cy="220" r="1.5" fill="#B7F701"/><circle cx="210" cy="420" r="1.5" fill="#B7F701"/></g><path d="M 155 580 L 130 500 L 175 430 L 145 350 L 190 280 L 150 200 L 175 130 L 155 60"
