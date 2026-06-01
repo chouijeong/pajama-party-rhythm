@@ -117,7 +117,7 @@ svg{display:block;}
 .subtitle{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ink-3);margin-top:8px;white-space:nowrap;}
 
 /* content stack */
-.stack{flex:1;display:flex;flex-direction:column;gap:16px;min-height:0;padding:0 24px;}
+.stack{flex:1;display:flex;flex-direction:column;gap:14px;min-height:0;padding:0 24px;}
 
 /* modular card */
 .card{flex:0 0 auto;background:var(--card);border:1px solid var(--hair);border-radius:var(--r-md);padding:14px 16px;}
@@ -133,20 +133,20 @@ svg{display:block;}
 
 /* metric trio */
 .trio{display:grid;grid-template-columns:repeat(3,1fr);}
-.trio .m{display:flex;flex-direction:column;gap:6px;padding:0 12px;border-left:1px solid var(--hair);min-width:0;}
+.trio .m{display:flex;flex-direction:column;gap:6px;padding:0 10px;border-left:1px solid var(--hair);min-width:0;}
 .trio .m:first-child{padding-left:0;border-left:none;}
-.trio .m .k{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--ink-3);text-transform:uppercase;white-space:nowrap;}
-.trio .m .v{font-size:19px;font-weight:700;letter-spacing:-.02em;line-height:1;}
+.trio .m .k{font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--ink-3);text-transform:uppercase;white-space:nowrap;}
+.trio .m .v{font-size:18px;font-weight:700;letter-spacing:-.02em;line-height:1;white-space:nowrap;}
 .trio .m .v small{font-size:10px;font-weight:500;color:var(--ink-3);margin-left:1px;}
 .trio .m .v.acc{color:var(--acc);}
 
 /* hero metric */
-.hero-m{display:flex;align-items:flex-end;justify-content:space-between;}
-.hero-m .lead-n{font-size:40px;font-weight:800;letter-spacing:-.04em;line-height:.85;}
-.hero-m .lead-n small{font-size:15px;font-weight:600;color:var(--ink-3);margin-left:3px;letter-spacing:0;}
+.hero-m{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;}
+.hero-m .lead-n{font-size:32px;font-weight:800;letter-spacing:-.03em;line-height:.85;white-space:nowrap;}
+.hero-m .lead-n small{font-size:13px;font-weight:600;color:var(--ink-3);margin-left:2px;letter-spacing:0;}
 .hero-m .aside-n{text-align:right;}
 .hero-m .aside-n .k{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--ink-3);text-transform:uppercase;margin-bottom:6px;}
-.stars{font-size:14px;letter-spacing:3px;color:var(--acc);}
+.stars{font-size:13px;letter-spacing:1.5px;color:var(--acc);white-space:nowrap;}
 .stars .o{color:var(--ink-4);}
 
 /* primary CTA — the ONLY glow in the UI */
@@ -170,8 +170,8 @@ svg{display:block;}
 .viz{position:relative;flex:1 1 0;min-height:96px;background:
     radial-gradient(ellipse 70% 55% at 50% 42%,rgba(198,248,51,.05),transparent 70%),var(--card);
   border:1px solid var(--hair);border-radius:var(--r-md);overflow:hidden;}
-.viz .badge{position:absolute;top:14px;left:14px;z-index:3;display:flex;align-items:center;gap:7px;white-space:nowrap;
-  font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;color:var(--acc);background:rgba(0,0,0,.45);border:1px solid var(--acc-line);padding:5px 10px;border-radius:100px;}
+.viz .badge{position:absolute;top:12px;left:12px;z-index:3;display:flex;align-items:center;gap:6px;white-space:nowrap;
+  font-family:var(--mono);font-size:8px;letter-spacing:.1em;color:var(--acc);background:rgba(0,0,0,.6);border:1px solid var(--acc-line);padding:4px 9px;border-radius:100px;}
 .viz .badge .d{width:5px;height:5px;border-radius:50%;background:var(--acc);animation:pulse 1.6s infinite;}
 .viz .dim{position:absolute;top:14px;right:16px;z-index:3;font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--ink-3);}
 .viz svg{position:absolute;inset:0;width:100%;height:100%;}
@@ -304,7 +304,7 @@ svg{display:block;}
           <div class="dim">128M</div>
           <svg viewBox="0 0 312 250" preserveAspectRatio="xMidYMid meet">
             <!-- isometric tower -->
-            <g transform="translate(156,128)">
+            <g transform="translate(156,150) scale(0.92)">
               <!-- faces -->
               <polygon points="0,-78 -52,-50 -52,58 0,86" fill="rgba(198,248,51,.07)" stroke="#C6F833" stroke-width="1" opacity="0.9"/>
               <polygon points="0,-78 52,-50 52,58 0,86" fill="rgba(198,248,51,.03)" stroke="#C6F833" stroke-width="1" opacity="0.62"/>
