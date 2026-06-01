@@ -1,599 +1,528 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8">
+<html lang="ko"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>REVERT — Urban Climbing UI</title>
+<title>REVERT — Urban Climbing OS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
 <style>
+/* =========================================================================
+   REVERT — Design System
+   8pt grid · 24px screen margins · 16px vertical rhythm
+   Black canvas · single neon-lime accent · glow only on primary CTA
+   Refs: Nothing OS · Rivian · Arc · Apple Vision Pro
+   ========================================================================= */
 :root{
-  --bg:#060606; --bg-2:#0c0b0a;
-  --ink:#ffffff; --ink-dim:#8c8880; --ink-faint:#454039;
-  --acc:#B7F701;            /* signal lime */
-  --acc-bright:#D2FF3D;
-  --acc-deep:#8FBF00;
-  --acc-faint:rgba(183,247,1,0.08);
-  --acc-dim:rgba(183,247,1,0.35);
-  --surface:rgba(26,23,20,0.92);
-  --surface-top:rgba(34,30,26,0.94);
-  --line:rgba(255,255,255,0.08);
-  --line-strong:rgba(255,255,255,0.16);
-  --sans:'Pretendard Variable',Pretendard,'Inter',-apple-system,'Apple SD Gothic Neo',sans-serif;
+  /* surfaces */
+  --bg:#000000;
+  --panel:#0A0A0A;
+  --card:#121212;
+  --card-2:#171717;
+  --hair:rgba(255,255,255,0.07);
+  --hair-2:rgba(255,255,255,0.12);
+  /* ink */
+  --ink:#F4F4F2;
+  --ink-2:#A0A09A;
+  --ink-3:#5C5C56;
+  --ink-4:#3A3A36;
+  /* accent (single) */
+  --acc:#C6F833;
+  --acc-ink:#0A0E00;
+  --acc-soft:rgba(198,248,51,0.12);
+  --acc-line:rgba(198,248,51,0.28);
+  /* type */
+  --sans:'Pretendard Variable',Pretendard,'Inter',-apple-system,sans-serif;
   --mono:'JetBrains Mono',monospace;
+  /* radius */
+  --r-lg:24px; --r-md:18px; --r-sm:12px;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;width:100%;overflow:hidden;background:#000;
-  font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;cursor:default;}
+html,body{height:100%;width:100%;overflow:hidden;background:#000;color:var(--ink);
+  font-family:var(--sans);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;cursor:default;}
 body{display:flex;align-items:center;justify-content:center;}
+svg{display:block;}
 
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
-@keyframes scanSweep{0%{transform:translateY(-30%)}100%{transform:translateY(330%)}}
-@keyframes ringPulse{0%{transform:scale(0.6);opacity:0.9}100%{transform:scale(2.2);opacity:0}}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
-@keyframes hb{0%,100%{transform:scale(1)}14%{transform:scale(1.18)}28%{transform:scale(1)}42%{transform:scale(1.12)}56%{transform:scale(1)}}
-@keyframes recpulse{0%,100%{opacity:1}50%{opacity:0.25}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes sweepY{0%{transform:translateY(0)}100%{transform:translateY(64px)}}
+@keyframes hbeat{0%,100%{transform:scale(1)}20%{transform:scale(1.16)}40%{transform:scale(1)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-/* ---------- viewport / canvas ---------- */
-.viewport{position:relative;width:100vw;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;}
-.canvas{position:relative;width:1560px;height:600px;flex:0 0 auto;transform-origin:center center;
-  background:
-    radial-gradient(ellipse 50% 60% at 50% 42%,rgba(183,247,1,0.07),transparent 60%),
-    radial-gradient(ellipse 80% 80% at 50% 120%,rgba(183,247,1,0.04),transparent 70%),
-    var(--bg);
-  border:1px solid var(--line);overflow:hidden;}
-.canvas::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:1;
-  background-image:linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px);
-  background-size:44px 44px;-webkit-mask-image:radial-gradient(ellipse 70% 80% at 50% 50%,#000,transparent 85%);mask-image:radial-gradient(ellipse 70% 80% at 50% 50%,#000,transparent 85%);}
+/* ---------- viewport / canvas (13:5) ---------- */
+.viewport{position:relative;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.canvas{position:relative;width:1560px;height:600px;flex:0 0 auto;transform-origin:center;background:var(--bg);overflow:hidden;
+  display:grid;grid-template-columns:1fr 300px 1fr;align-items:center;}
+/* faint static grid texture, no neon */
+.canvas::before{content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+  background-size:48px 48px;
+  -webkit-mask-image:radial-gradient(ellipse 60% 75% at 50% 50%,#000,transparent 80%);
+          mask-image:radial-gradient(ellipse 60% 75% at 50% 50%,#000,transparent 80%);}
 
-/* corners */
-.corner{position:absolute;width:26px;height:26px;border:1.5px solid var(--acc);opacity:0.55;z-index:6;}
-.corner.tl{top:18px;left:18px;border-right:none;border-bottom:none}
-.corner.tr{top:18px;right:18px;border-left:none;border-bottom:none}
-.corner.bl{bottom:18px;left:18px;border-right:none;border-top:none}
-.corner.br{bottom:18px;right:18px;border-left:none;border-top:none}
-
-/* ---------- top bar ---------- */
-.topbar{position:absolute;top:0;left:0;right:0;z-index:50;padding:20px 40px;display:flex;justify-content:space-between;align-items:center;pointer-events:none;}
-.brand{display:flex;align-items:center;gap:11px;}
-.brand .logo{width:24px;height:24px;}
-.brand .nm{font-family:var(--sans);font-size:17px;letter-spacing:0.32em;font-weight:600;}
+/* ---------- top frame ---------- */
+.topbar{position:absolute;top:0;left:0;right:0;z-index:50;height:72px;padding:0 48px;display:flex;align-items:center;justify-content:space-between;pointer-events:none;}
+.brand{display:flex;align-items:center;gap:12px;}
+.brand .mk{width:22px;height:22px;}
+.brand .nm{font-size:15px;letter-spacing:.34em;font-weight:600;}
 .brand .nm b{color:var(--acc);font-weight:700;}
-.sysmeta{font-family:var(--mono);font-size:11px;letter-spacing:0.28em;color:var(--ink-dim);display:flex;align-items:center;gap:14px;}
-.sysmeta .dot{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:pulse 2s infinite;}
-.sysmeta .cur{color:var(--acc);}
+.sys{font-family:var(--mono);font-size:10.5px;letter-spacing:.26em;color:var(--ink-3);display:flex;align-items:center;gap:12px;}
+.sys .d{width:5px;height:5px;border-radius:50%;background:var(--acc);animation:pulse 2.4s infinite;}
 
-/* progress dots */
-.pdots{position:absolute;top:58px;left:50%;transform:translateX(-50%);z-index:50;display:flex;gap:8px;}
-.pdot{width:26px;height:3px;border-radius:100px;background:var(--line-strong);transition:all .4s ease;cursor:pointer;}
-.pdot.active{background:var(--acc);box-shadow:0 0 8px var(--acc);width:44px;}
-.pdot.passed{background:var(--acc-dim);}
+/* ---------- left editorial column ---------- */
+.lead{grid-column:1;justify-self:end;width:300px;padding-right:24px;z-index:30;opacity:0;transition:opacity .5s ease;}
+.lead.show{opacity:1;}
+.lead .idx{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--ink-3);margin-bottom:24px;}
+.lead .idx b{color:var(--acc);font-weight:500;}
+.lead h1{font-size:40px;line-height:1.04;letter-spacing:-.03em;font-weight:700;margin-bottom:16px;}
+.lead h1 em{font-style:normal;color:var(--acc);}
+.lead p{font-size:13px;line-height:1.7;color:var(--ink-2);max-width:260px;margin-bottom:32px;}
+.lead .step{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;color:var(--ink-3);}
+.lead .step .bar{width:40px;height:1px;background:var(--ink-4);position:relative;overflow:hidden;}
+.lead .step .bar i{position:absolute;inset:0;width:20%;background:var(--acc);}
 
-/* ---------- side caption / hint ---------- */
-.side-cap{position:absolute;top:50%;left:46px;transform:translateY(-50%);z-index:40;max-width:300px;opacity:0;transition:opacity .55s ease .15s;pointer-events:none;}
-.side-cap.show{opacity:1;}
-.side-cap .tag{font-family:var(--mono);font-size:11px;letter-spacing:0.3em;color:var(--acc);margin-bottom:16px;display:flex;align-items:center;gap:12px;}
-.side-cap .tag::before{content:'';width:24px;height:1px;background:var(--acc);}
-.side-cap .head{font-size:38px;line-height:1.05;letter-spacing:-0.025em;font-weight:600;margin-bottom:18px;}
-.side-cap .head em{font-style:normal;color:var(--acc);}
-.side-cap .body{font-family:var(--mono);font-size:11px;line-height:1.85;color:var(--ink-dim);letter-spacing:0.02em;}
+/* ---------- right hint column ---------- */
+.aside{grid-column:3;justify-self:start;width:300px;padding-left:24px;z-index:30;opacity:0;transition:opacity .5s ease;}
+.aside.show{opacity:1;}
+.aside .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.28em;color:var(--ink-3);margin-bottom:20px;}
+.aside .lbl span{color:var(--acc);}
+.aside .row{display:flex;flex-direction:column;gap:16px;}
+.aside .it{display:flex;align-items:center;gap:12px;}
+.aside .it .kbd{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--ink-2);border:1px solid var(--hair);border-radius:7px;padding:6px 9px;min-width:34px;text-align:center;}
+.aside .it .tx{font-size:12px;color:var(--ink-2);}
 
-.side-hint{position:absolute;top:50%;right:46px;transform:translateY(-50%);z-index:40;max-width:230px;opacity:0;transition:opacity .55s ease .3s;pointer-events:none;}
-.side-hint.show{opacity:1;}
-.side-hint .lbl{font-family:var(--mono);font-size:10px;letter-spacing:0.3em;color:var(--ink-dim);margin-bottom:16px;text-align:right;}
-.side-hint .lbl span{color:var(--acc);}
-.side-hint .hlist{display:flex;flex-direction:column;gap:11px;align-items:flex-end;}
-.side-hint .hitem{font-family:var(--mono);font-size:10px;letter-spacing:0.1em;color:var(--ink);display:flex;align-items:center;gap:9px;}
-.side-hint .hitem .ar{color:var(--acc);}
-
-/* ---------- phone ---------- */
-.stage{position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding-bottom:72px;}
-.phone{position:relative;height:492px;aspect-ratio:9/19.5;background:#000;border-radius:40px;padding:7px;
-  box-shadow:0 0 0 1px rgba(255,255,255,0.07),0 0 0 2px #100d0a,0 0 90px rgba(183,247,1,0.07),0 48px 110px -30px rgba(0,0,0,0.95);overflow:hidden;}
-.phone::before{content:'';position:absolute;top:13px;left:50%;transform:translateX(-50%);width:92px;height:24px;background:#000;border-radius:13px;z-index:60;}
-.screen{position:relative;width:100%;height:100%;border-radius:35px;overflow:hidden;background:#050505;}
+/* ---------- phone (center hero) ---------- */
+.stage{grid-column:2;justify-self:center;align-self:start;z-index:20;margin-top:8px;}
+.phone{position:relative;height:512px;aspect-ratio:9/19.5;background:#000;border-radius:44px;padding:6px;
+  box-shadow:0 0 0 1px rgba(255,255,255,.06),0 0 0 7px #0c0c0c,0 40px 90px -40px rgba(0,0,0,.95);}
+.phone::before{content:'';position:absolute;top:14px;left:50%;transform:translateX(-50%);width:78px;height:22px;background:#000;border-radius:12px;z-index:60;}
+.screen{position:relative;width:100%;height:100%;border-radius:40px;overflow:hidden;background:var(--panel);}
 
 /* status bar */
-.statusbar{position:absolute;top:0;left:0;right:0;height:40px;display:flex;justify-content:space-between;align-items:center;padding:13px 26px 0;font-size:11px;font-weight:600;z-index:40;}
-.statusbar .ic{display:flex;gap:5px;align-items:center}
+.sb{position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:14px 24px 0;z-index:40;
+  font-size:11px;font-weight:600;letter-spacing:.02em;}
+.sb .ic{display:flex;gap:6px;align-items:center;}
 
-/* panels */
-.panel{position:absolute;inset:0;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .5s ease;}
+/* panel base — 24px side margins, 16px rhythm */
+.panel{position:absolute;inset:0;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .45s ease;
+  display:flex;flex-direction:column;padding:48px 0 0;}
 .panel.active{opacity:1;visibility:visible;pointer-events:auto;}
+.panel.active .stack>*{animation:fadeUp .5s ease both;}
 
-/* generic phone header */
-.ph-head{position:absolute;top:46px;left:0;right:0;padding:6px 20px 0;z-index:20;}
-.ph-eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:0.3em;color:var(--acc);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:7px;font-weight:600;}
-.ph-eyebrow .pin{font-size:10px;}
-.ph-title{font-size:24px;font-weight:700;letter-spacing:-0.02em;line-height:1.04;}
-.ph-title em{font-style:normal;color:var(--acc);}
+/* shared screen header */
+.shead{flex:0 0 auto;}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.26em;color:var(--acc);text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.eyebrow::before{content:'';width:14px;height:1px;background:var(--acc);}
+.title{font-size:22px;font-weight:700;letter-spacing:-.03em;line-height:1.08;white-space:nowrap;}
+.title em{font-style:normal;color:var(--acc);}
+.subtitle{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ink-3);margin-top:8px;white-space:nowrap;}
+
+/* content stack */
+.stack{flex:1;display:flex;flex-direction:column;gap:16px;min-height:0;padding:0 24px;}
+
+/* modular card */
+.card{flex:0 0 auto;background:var(--card);border:1px solid var(--hair);border-radius:var(--r-md);padding:14px 16px;}
+.card.flush{padding:0;overflow:hidden;}
+
+/* data list rows */
+.kv{display:flex;align-items:baseline;justify-content:space-between;}
+.kv+.kv{margin-top:14px;}
+.kv .k{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--ink-3);text-transform:uppercase;}
+.kv .v{font-size:15px;font-weight:600;letter-spacing:-.01em;}
+.kv .v.acc{color:var(--acc);}
+.kv .v small{font-size:10px;color:var(--ink-3);font-weight:500;margin-left:2px;}
+
+/* metric trio */
+.trio{display:grid;grid-template-columns:repeat(3,1fr);}
+.trio .m{display:flex;flex-direction:column;gap:6px;padding:0 12px;border-left:1px solid var(--hair);min-width:0;}
+.trio .m:first-child{padding-left:0;border-left:none;}
+.trio .m .k{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--ink-3);text-transform:uppercase;white-space:nowrap;}
+.trio .m .v{font-size:19px;font-weight:700;letter-spacing:-.02em;line-height:1;}
+.trio .m .v small{font-size:10px;font-weight:500;color:var(--ink-3);margin-left:1px;}
+.trio .m .v.acc{color:var(--acc);}
+
+/* hero metric */
+.hero-m{display:flex;align-items:flex-end;justify-content:space-between;}
+.hero-m .lead-n{font-size:40px;font-weight:800;letter-spacing:-.04em;line-height:.85;}
+.hero-m .lead-n small{font-size:15px;font-weight:600;color:var(--ink-3);margin-left:3px;letter-spacing:0;}
+.hero-m .aside-n{text-align:right;}
+.hero-m .aside-n .k{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--ink-3);text-transform:uppercase;margin-bottom:6px;}
+.stars{font-size:14px;letter-spacing:3px;color:var(--acc);}
+.stars .o{color:var(--ink-4);}
+
+/* primary CTA — the ONLY glow in the UI */
+.cta{flex:0 0 auto;margin:16px 24px 16px;height:48px;border:none;border-radius:14px;background:var(--acc);color:var(--acc-ink);
+  font-family:var(--sans);font-weight:700;font-size:14px;letter-spacing:.01em;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;
+  box-shadow:0 0 0 1px rgba(198,248,51,.4),0 8px 30px -6px rgba(198,248,51,.5);transition:transform .18s,box-shadow .18s;}
+.cta:hover{transform:translateY(-1px);box-shadow:0 0 0 1px rgba(198,248,51,.6),0 12px 38px -6px rgba(198,248,51,.62);}
+.cta .ar{font-size:17px;}
 
 /* tab bar */
-.tabbar{position:absolute;bottom:0;left:0;right:0;height:74px;z-index:30;display:flex;justify-content:space-around;align-items:flex-start;padding-top:11px;
-  background:linear-gradient(180deg,transparent,rgba(6,6,6,0.96) 38%,#060606);border-top:1px solid var(--line);}
-.tab{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;padding:3px 9px;}
-.tab .ti{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--ink-faint);transition:all .25s;}
-.tab.on .ti{background:var(--acc);color:#0a0c00;box-shadow:0 6px 16px -4px rgba(183,247,1,0.55);}
-.tab .tl{font-family:var(--mono);font-size:8px;letter-spacing:0.14em;color:var(--ink-faint);}
+.tabbar{flex:0 0 auto;height:60px;z-index:30;display:flex;justify-content:space-around;align-items:center;
+  background:var(--panel);border-top:1px solid var(--hair);}
+.tab{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;width:48px;}
+.tab .ti{color:var(--ink-4);transition:color .2s;display:flex;}
+.tab.on .ti{color:var(--acc);}
+.tab .tl{font-family:var(--mono);font-size:7.5px;letter-spacing:.1em;color:var(--ink-4);}
 .tab.on .tl{color:var(--acc);}
-.tab:hover .ti:not(.on){color:var(--ink-dim);}
+.tab:hover .ti:not(.on){color:var(--ink-2);}
 
-/* HUD floating stat (left/right rails inside phone) */
-.hud-rail{position:absolute;z-index:22;display:flex;flex-direction:column;gap:10px;}
-.hud-rail.left{left:14px;}
-.hud-rail.right{right:14px;align-items:flex-end;}
-.hud-stat{background:rgba(10,8,6,0.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:12px;padding:8px 11px;min-width:78px;}
-.panel[data-p="scan"] .ph-title{font-size:21px;}
-.panel[data-p="scan"] .hud-stat{min-width:70px;padding:7px 9px;background:rgba(8,12,4,0.62);}
-.hud-stat .k{font-family:var(--mono);font-size:7px;letter-spacing:0.2em;color:var(--ink-dim);text-transform:uppercase;margin-bottom:3px;}
-.hud-stat .v{font-size:17px;font-weight:700;letter-spacing:-0.02em;line-height:1;}
-.hud-stat .v small{font-size:9px;font-weight:500;color:var(--ink-dim);margin-left:1px;}
-.hud-stat .v.acc{color:var(--acc);}
-.hud-stat.right-al{text-align:right;}
+/* ===== SCAN: 3D building visual (calm, no glow) ===== */
+.viz{position:relative;flex:1 1 0;min-height:96px;background:
+    radial-gradient(ellipse 70% 55% at 50% 42%,rgba(198,248,51,.05),transparent 70%),var(--card);
+  border:1px solid var(--hair);border-radius:var(--r-md);overflow:hidden;}
+.viz .badge{position:absolute;top:14px;left:14px;z-index:3;display:flex;align-items:center;gap:7px;white-space:nowrap;
+  font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;color:var(--acc);background:rgba(0,0,0,.45);border:1px solid var(--acc-line);padding:5px 10px;border-radius:100px;}
+.viz .badge .d{width:5px;height:5px;border-radius:50%;background:var(--acc);animation:pulse 1.6s infinite;}
+.viz .dim{position:absolute;top:14px;right:16px;z-index:3;font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--ink-3);}
+.viz svg{position:absolute;inset:0;width:100%;height:100%;}
 
-/* big bottom action button */
-.cta-btn{position:absolute;left:18px;right:18px;bottom:84px;z-index:25;height:50px;border:none;border-radius:15px;background:var(--acc);color:#0a0c00;
-  font-family:var(--sans);font-weight:700;font-size:13px;letter-spacing:0.04em;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;
-  box-shadow:0 10px 26px -8px rgba(183,247,1,0.6);transition:all .2s;}
-.cta-btn:hover{background:var(--acc-bright);transform:translateY(-1px);}
-.cta-btn .ar{font-size:16px;}
+/* ===== DECODE: map ===== */
+.map{position:relative;flex:1;min-height:0;background:var(--card);border:1px solid var(--hair);border-radius:var(--r-md);overflow:hidden;}
+.map svg{position:absolute;inset:0;width:100%;height:100%;}
+.pin{position:absolute;transform:translate(-50%,-50%);z-index:3;font-size:12px;line-height:1;}
+.pin.done{color:var(--acc);}
+.pin.scan{color:var(--ink);}
+.pin.fav{color:var(--ink-2);}
+.legend{position:absolute;left:14px;bottom:14px;z-index:3;display:flex;gap:14px;background:rgba(0,0,0,.45);border:1px solid var(--hair);border-radius:10px;padding:8px 12px;}
+.legend i{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;color:var(--ink-2);font-style:normal;}
+.legend i b{font-size:11px;}
+.legend i.done b{color:var(--acc);}
 
-/* ============ SCAN ============ */
-.scan-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 45%,rgba(183,247,1,0.06),transparent 65%),linear-gradient(180deg,#0a0908,#050403);}
-.scan-svg{position:absolute;inset:0;width:100%;height:100%;}
-.scanline{position:absolute;left:8%;right:8%;height:2px;top:18%;z-index:8;
-  background:linear-gradient(90deg,transparent,var(--acc),transparent);box-shadow:0 0 14px 2px var(--acc);
-  animation:scanSweep 3.2s ease-in-out infinite;opacity:0.8;}
-.scan-fc{position:absolute;width:18px;height:18px;border:1.5px solid var(--acc);z-index:9;opacity:0.6;}
-.scan-fc.a{top:128px;left:18px;border-right:none;border-bottom:none}
-.scan-fc.b{top:128px;right:18px;border-left:none;border-bottom:none}
-.scan-badge{position:absolute;top:138px;left:50%;transform:translateX(-50%);z-index:12;display:flex;align-items:center;gap:7px;white-space:nowrap;
-  font-family:var(--mono);font-size:8px;letter-spacing:0.18em;color:var(--acc);background:rgba(0,0,0,0.5);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);border:1px solid var(--acc-dim);padding:5px 12px;border-radius:100px;}
-.scan-badge .d{width:5px;height:5px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc);animation:pulse 1.3s infinite;}
-.scan-loc{font-family:var(--mono);font-size:8.5px;letter-spacing:0.2em;color:var(--ink-dim);margin-top:6px;}
-.stars{font-size:14px;letter-spacing:2px;color:var(--acc)}
-.stars .off{color:var(--ink-faint)}
-/* SCAN bottom sheet — grouped data, no overlap */
-.scan-sheet{position:absolute;left:14px;right:14px;bottom:84px;z-index:16;
-  background:linear-gradient(180deg,rgba(20,26,12,0.96),rgba(12,16,7,0.97));border:1px solid var(--line-strong);border-radius:20px;
-  padding:12px 15px;box-shadow:0 -14px 44px -10px rgba(0,0,0,0.9),0 0 0 1px rgba(183,247,1,0.05);}
-.scan-cta-btn{margin-top:12px;width:100%;height:44px;border:none;border-radius:13px;background:var(--acc);color:#0a0c00;
-  font-family:var(--sans);font-weight:700;font-size:13px;letter-spacing:0.04em;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;
-  box-shadow:0 8px 22px -8px rgba(183,247,1,0.6);transition:all .2s;}
-.scan-cta-btn:hover{background:var(--acc-bright);transform:translateY(-1px);}
-.scan-cta-btn .ar{font-size:15px;}
-.scan-hero{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:11px;margin-bottom:11px;border-bottom:1px solid var(--line);}
-.scan-hero .k{font-family:var(--mono);font-size:8px;letter-spacing:0.2em;color:var(--ink-dim);margin-bottom:4px;}
-.scan-hero-main .big{font-size:34px;font-weight:800;letter-spacing:-0.03em;line-height:0.85;color:var(--acc);}
-.scan-hero-main .big small{font-size:14px;font-weight:600;color:var(--ink-dim);margin-left:2px;letter-spacing:0;}
-.scan-hero-side{text-align:right;}
-.scan-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-.scan-cell{text-align:left;}
-.scan-cell .k{font-family:var(--mono);font-size:7.5px;letter-spacing:0.16em;color:var(--ink-dim);margin-bottom:4px;}
-.scan-cell .v{font-size:16px;font-weight:700;letter-spacing:-0.02em;line-height:1;}
-.scan-cell .v small{font-size:9px;font-weight:500;color:var(--ink-dim);margin-left:1px;}
-.scan-cell .v.acc{color:var(--acc);}
+/* ===== CLIMBING ===== */
+.pov{position:relative;flex:1;min-height:0;background:#0d0d0d;border:1px solid var(--hair);border-radius:var(--r-md);overflow:hidden;}
+.pov svg{position:absolute;inset:0;width:100%;height:100%;}
+.pov .rec{position:absolute;top:14px;left:14px;z-index:3;display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--ink);background:rgba(0,0,0,.5);border:1px solid var(--hair);border-radius:100px;padding:5px 10px;}
+.pov .rec .d{width:6px;height:6px;border-radius:50%;background:#FF4D4D;animation:pulse 1s infinite;}
+.pov .tc{position:absolute;top:14px;right:14px;z-index:3;font-family:var(--mono);font-size:10px;color:var(--ink);background:rgba(0,0,0,.5);border:1px solid var(--hair);border-radius:100px;padding:5px 10px;}
+.pov .prog{position:absolute;left:14px;right:14px;bottom:14px;z-index:3;}
+.pov .prog .r{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+.pov .prog .r .k{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--ink-2);text-transform:uppercase;}
+.pov .prog .r .p{font-size:18px;font-weight:700;color:var(--acc);letter-spacing:-.02em;}
+.pov .prog .track{height:4px;border-radius:100px;background:rgba(255,255,255,.12);overflow:hidden;}
+.pov .prog .track i{display:block;height:100%;width:68%;background:var(--acc);border-radius:100px;}
 
-/* ============ DECODE (map) ============ */
-.decode-bg{position:absolute;inset:0;background:linear-gradient(180deg,#0a0908,#050404);}
-.decode-svg{position:absolute;inset:0;width:100%;height:100%;}
-.map-pin{position:absolute;z-index:10;transform:translate(-50%,-50%);cursor:pointer;}
-.map-pin .glyph{font-size:13px;color:var(--acc);filter:drop-shadow(0 0 5px rgba(183,247,1,0.7));line-height:1;}
-.map-pin.scan .glyph{color:var(--acc-bright)}
-.map-pin.fav .glyph{color:#fff}
-.map-pin .rp{position:absolute;top:50%;left:50%;width:22px;height:22px;margin:-11px;border:1px solid var(--acc);border-radius:50%;animation:ringPulse 2.6s ease-out infinite;}
-.map-legend{position:absolute;top:120px;left:20px;z-index:12;display:flex;flex-direction:column;gap:6px;background:rgba(10,8,6,0.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:12px;padding:9px 11px;}
-.lg{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:8px;letter-spacing:0.14em;color:var(--ink-dim);}
-.lg b{color:var(--acc);font-size:10px;width:10px;text-align:center}
-.decode-stats{position:absolute;left:16px;right:16px;bottom:84px;z-index:14;display:grid;grid-template-columns:repeat(3,1fr);gap:9px;}
-.ds{background:linear-gradient(180deg,var(--surface-top),var(--surface));border:1px solid var(--line);border-radius:16px;padding:11px 10px;text-align:center;}
-.ds{min-width:0;}
-.ds .k{font-family:var(--mono);font-size:6.5px;letter-spacing:0.12em;color:var(--ink-dim);text-transform:uppercase;margin-bottom:5px;}
-.ds .v{font-size:19px;font-weight:700;letter-spacing:-0.02em;line-height:1;}
-.ds .v small{font-size:9px;color:var(--ink-dim);font-weight:500}
-.ds .v.acc{color:var(--acc)}
+/* ===== REPLAY ===== */
+.traj{position:relative;height:96px;flex:0 0 auto;background:var(--card);border:1px solid var(--hair);border-radius:var(--r-md);overflow:hidden;}
+.traj svg{width:100%;height:100%;}
+.traj .bd{position:absolute;top:12px;left:14px;font-family:var(--mono);font-size:8.5px;letter-spacing:.16em;color:var(--ink-3);}
+.traj .pl{position:absolute;right:12px;bottom:12px;width:30px;height:30px;border-radius:50%;background:var(--acc);color:var(--acc-ink);display:flex;align-items:center;justify-content:center;}
+.glines{display:flex;flex-direction:column;gap:9px;}
+.gl{display:flex;align-items:center;gap:12px;}
+.gl .k{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--ink-3);width:34px;text-transform:uppercase;}
+.gl .b{flex:1;height:14px;}
+.gl .b svg{width:100%;height:100%;}
+.aigrid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;}
+.aigrid .c .k{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--ink-3);text-transform:uppercase;margin-bottom:5px;white-space:nowrap;}
+.aigrid .c .v{font-size:14px;font-weight:600;letter-spacing:-.01em;}
+.aigrid .c .v.big{font-size:22px;font-weight:800;letter-spacing:-.03em;}
+.aigrid .c .v.acc{color:var(--acc);}
 
-/* ============ CLIMBING ============ */
-.climb-bg{position:absolute;inset:0;background:linear-gradient(180deg,#11100e,#0a0807 55%,#060504);}
-.climb-svg{position:absolute;inset:0;width:100%;height:100%;}
-.climb-vignette{position:absolute;inset:0;z-index:5;pointer-events:none;
-  background:radial-gradient(ellipse 90% 80% at 50% 45%,transparent 55%,rgba(0,0,0,0.55) 100%);}
-.rec{position:absolute;top:80px;left:18px;z-index:14;display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:9px;letter-spacing:0.2em;color:#fff;
-  background:rgba(0,0,0,0.6);border:1px solid var(--line);padding:5px 10px;border-radius:100px;}
-.rec .d{width:7px;height:7px;border-radius:50%;background:#ff2d2d;box-shadow:0 0 8px #ff2d2d;animation:recpulse 1s infinite;}
-.climb-time{position:absolute;top:80px;right:18px;z-index:14;font-family:var(--mono);font-size:10px;letter-spacing:0.1em;color:#fff;background:rgba(0,0,0,0.6);border:1px solid var(--line);padding:5px 10px;border-radius:100px;}
-.ar-tag{position:absolute;z-index:13;font-family:var(--mono);font-size:7.5px;letter-spacing:0.12em;color:var(--acc);background:rgba(0,0,0,0.55);border:1px solid var(--acc-dim);border-radius:6px;padding:3px 6px;white-space:nowrap;}
-.climb-rail{position:absolute;bottom:150px;left:14px;right:14px;z-index:14;display:flex;justify-content:space-between;align-items:flex-end;}
-.cstat{background:rgba(10,8,6,0.5);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:12px;padding:8px 10px;text-align:center;min-width:64px;}
-.cstat .k{font-family:var(--mono);font-size:6.5px;letter-spacing:0.16em;color:var(--ink-dim);text-transform:uppercase;margin-bottom:3px;}
-.cstat .v{font-size:16px;font-weight:700;line-height:1;letter-spacing:-0.02em}
-.cstat .v small{font-size:8px;color:var(--ink-dim);font-weight:500}
-.cstat .v.acc{color:var(--acc)}
-.cstat .v.hr{color:#ff4d4d;display:inline-flex;align-items:center;gap:4px}
-.cstat .v.hr svg{animation:hb 1s infinite}
-.climb-prog{position:absolute;bottom:86px;left:18px;right:18px;z-index:14;}
-.climb-prog .row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;}
-.climb-prog .row .lbl{font-family:var(--mono);font-size:8.5px;letter-spacing:0.18em;color:var(--ink-dim);text-transform:uppercase}
-.climb-prog .row .pct{font-size:20px;font-weight:700;color:var(--acc);letter-spacing:-0.02em}
-.climb-prog .bar{height:6px;border-radius:100px;background:rgba(255,255,255,0.1);overflow:hidden;}
-.climb-prog .bar i{display:block;height:100%;width:68%;border-radius:100px;background:linear-gradient(90deg,var(--acc-deep),var(--acc));box-shadow:0 0 12px var(--acc);}
+/* ===== COMMUNITY ===== */
+.feed{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:16px;padding-bottom:16px;}
+.feed::-webkit-scrollbar{width:0;}
+.chal{flex:0 0 auto;background:var(--acc);color:var(--acc-ink);border-radius:var(--r-md);padding:16px;position:relative;overflow:hidden;}
+.chal .k{font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;font-weight:600;opacity:.7;text-transform:uppercase;}
+.chal .t{font-size:18px;font-weight:800;letter-spacing:-.02em;margin-top:6px;}
+.chal .r{font-family:var(--mono);font-size:9px;font-weight:600;margin-top:10px;display:inline-block;background:rgba(0,0,0,.16);padding:4px 10px;border-radius:100px;}
+.post{flex:0 0 auto;background:var(--card);border:1px solid var(--hair);border-radius:var(--r-md);overflow:hidden;}
+.post .u{display:flex;align-items:center;gap:10px;padding:14px 16px;}
+.post .u .av{width:28px;height:28px;border-radius:50%;background:var(--card-2);border:1px solid var(--hair-2);}
+.post .u .un{font-size:12px;font-weight:600;flex:1;min-width:0;white-space:nowrap;}
+.post .u .un .d{color:var(--ink-3);font-weight:400;font-size:10px;}
+.post .u .tm{font-family:var(--mono);font-size:9px;color:var(--ink-3);}
+.post .v{position:relative;aspect-ratio:16/10;overflow:hidden;background:#0d0d0d;}
+.post .v svg{width:100%;height:100%;}
+.post .v .pl{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:42px;height:42px;border-radius:50%;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;}
+.post .v .sc{position:absolute;top:12px;right:12px;background:var(--acc);color:var(--acc-ink);font-family:var(--mono);font-weight:600;font-size:11px;padding:3px 9px;border-radius:100px;}
+.post .v .nm{position:absolute;left:16px;bottom:14px;}
+.post .v .nm .b{font-size:15px;font-weight:700;letter-spacing:-.01em;}
+.post .v .nm .s{font-size:11px;color:var(--acc);letter-spacing:2px;margin-top:3px;}
+.post .v .nm .s .o{color:var(--ink-4);}
+.post .a{display:flex;align-items:center;gap:20px;padding:14px 16px;border-top:1px solid var(--hair);}
+.post .a i{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9.5px;color:var(--ink-3);font-style:normal;}
+.post .a i.lk{color:var(--acc);}
+.post .a i.sv{margin-left:auto;}
 
-/* ============ REPLAY ============ */
-.replay-bg{position:absolute;inset:0;background:linear-gradient(180deg,#0a0908,#050404);}
-.replay-traj{position:absolute;top:92px;left:16px;right:16px;height:104px;z-index:12;
-  background:linear-gradient(180deg,rgba(20,17,14,0.6),rgba(10,8,6,0.6));border:1px solid var(--line);border-radius:18px;overflow:hidden;}
-.replay-traj svg{width:100%;height:100%}
-.traj-badge{position:absolute;top:8px;left:10px;font-family:var(--mono);font-size:7.5px;letter-spacing:0.18em;color:var(--acc);z-index:2}
-.traj-play{position:absolute;right:9px;bottom:9px;width:28px;height:28px;border-radius:50%;background:var(--acc);color:#0a0c00;display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(183,247,1,0.5);z-index:2}
-.replay-graphs{position:absolute;top:206px;left:16px;right:16px;z-index:12;display:flex;flex-direction:column;gap:4px;}
-.gr{display:flex;align-items:center;gap:8px;}
-.gr .gk{font-family:var(--mono);font-size:7px;letter-spacing:0.16em;color:var(--ink-dim);width:32px;text-transform:uppercase}
-.gr .gbar{flex:1;height:14px;position:relative;}
-.gr .gbar svg{width:100%;height:100%;display:block}
-.replay-ai{position:absolute;left:16px;right:16px;bottom:82px;z-index:14;
-  background:linear-gradient(180deg,var(--surface-top),var(--surface));border:1px solid var(--line-strong);border-radius:18px;padding:11px 14px;}
-.replay-ai .aih{font-family:var(--mono);font-size:8px;letter-spacing:0.22em;color:var(--acc);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:9px}
-.replay-ai .aih::before{content:'◆';font-size:7px}
-.ai-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
-.ai-cell .k{font-family:var(--mono);font-size:6.5px;letter-spacing:0.14em;color:var(--ink-dim);text-transform:uppercase;margin-bottom:3px}
-.ai-cell .v{font-size:13px;font-weight:700;letter-spacing:-0.01em}
-.ai-cell .v.acc{color:var(--acc)}
-.ai-cell .v.big{font-size:22px}
-.grade{display:none}
+/* ---------- bottom controls ---------- */
+.controls{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:50;display:flex;align-items:center;gap:16px;
+  background:rgba(14,14,14,.9);border:1px solid var(--hair);border-radius:100px;padding:8px 12px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);}
+.cbtn{width:34px;height:34px;border-radius:50%;background:transparent;border:1px solid var(--hair);display:flex;align-items:center;justify-content:center;color:var(--ink);cursor:pointer;transition:all .18s;}
+.cbtn:hover{border-color:var(--acc-line);color:var(--acc);}
+.cbtn.primary{background:var(--acc);border-color:var(--acc);color:var(--acc-ink);}
+.ccount{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--ink-3);min-width:48px;text-align:center;}
+.ccount span{color:var(--acc);}
+.cdiv{width:1px;height:18px;background:var(--hair);}
+.ckey{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--ink-4);border:1px solid var(--hair);border-radius:6px;padding:4px 7px;}
 
-/* ============ COMMUNITY ============ */
-.comm-bg{position:absolute;inset:0;background:linear-gradient(180deg,#0a0908,#050404);}
-.comm-feed{position:absolute;top:104px;bottom:80px;left:0;right:0;overflow-y:auto;padding:0 16px 12px;display:flex;flex-direction:column;gap:14px;}
-.comm-feed::-webkit-scrollbar{width:0}
-.challenge{flex:0 0 auto;background:linear-gradient(110deg,var(--acc-deep),var(--acc));border-radius:18px;padding:13px 15px;color:#0e1400;position:relative;overflow:hidden;}
-.challenge::after{content:'';position:absolute;right:-20px;top:-20px;width:90px;height:90px;border:14px solid rgba(255,255,255,0.16);border-radius:50%}
-.challenge .ck{font-family:var(--mono);font-size:8px;letter-spacing:0.2em;font-weight:600;opacity:0.8;text-transform:uppercase}
-.challenge .ct{font-size:18px;font-weight:800;letter-spacing:-0.02em;margin-top:3px}
-.challenge .cr{font-family:var(--mono);font-size:9px;font-weight:600;margin-top:6px;display:inline-block;background:rgba(0,0,0,0.22);padding:3px 9px;border-radius:100px}
-.fcard{flex:0 0 auto;background:linear-gradient(180deg,var(--surface-top),var(--surface));border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 14px 30px -14px rgba(0,0,0,0.7);}
-.fc-user{display:flex;align-items:center;gap:9px;padding:11px 13px;}
-.fc-av{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--acc);background:linear-gradient(135deg,#2a2420,#16120e);box-shadow:0 0 0 1.5px rgba(183,247,1,0.2)}
-.fc-un{font-size:11px;font-weight:600;flex:1;min-width:0;white-space:nowrap}
-.fc-un .dim{color:var(--ink-dim);font-size:9px;font-weight:400}
-.fc-tm{font-family:var(--mono);font-size:8px;color:var(--ink-dim);letter-spacing:0.1em;white-space:nowrap}
-.fc-vid{position:relative;width:100%;aspect-ratio:16/10;overflow:hidden;background:#0a0807}
-.fc-vid svg{width:100%;height:100%;display:block}
-.fc-playb{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,0.45);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;z-index:3}
-.fc-score{position:absolute;top:10px;right:10px;z-index:3;background:var(--acc);color:#0a0c00;font-family:var(--mono);font-weight:700;font-size:11px;padding:3px 9px;border-radius:100px;letter-spacing:0.02em}
-.fc-vlabel{position:absolute;left:0;right:0;bottom:0;padding:24px 13px 11px;z-index:2;background:linear-gradient(180deg,transparent,rgba(0,0,0,0.85))}
-.fc-vlabel .bn{font-size:15px;font-weight:700;letter-spacing:-0.01em}
-.fc-vlabel .diff{font-size:11px;color:var(--acc);letter-spacing:1px;margin-top:2px}
-.fc-vlabel .diff .off{color:var(--ink-faint)}
-.fc-act{display:flex;align-items:center;gap:18px;padding:11px 14px;border-top:1px solid var(--line)}
-.fa{display:flex;align-items:center;gap:5px;color:var(--ink-dim);font-family:var(--mono);font-size:9px;letter-spacing:0.06em;cursor:pointer}
-.fa.liked{color:var(--acc)}
-.fa.save{margin-left:auto}
-
-/* ---------- controls ---------- */
-.controls{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);z-index:50;display:flex;align-items:center;gap:18px;
-  background:rgba(14,12,10,0.92);border:1px solid var(--line);border-radius:100px;padding:9px 13px;}
-.cbtn{width:34px;height:34px;border-radius:50%;background:transparent;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--ink);cursor:pointer;transition:all .2s;}
-.cbtn:hover{background:var(--acc-faint);border-color:var(--acc-dim);color:var(--acc)}
-.cbtn.primary{background:var(--acc);border-color:var(--acc);color:#0a0c00;box-shadow:0 0 14px rgba(183,247,1,0.45)}
-.cbtn.primary:hover{background:var(--acc-bright)}
-.ccount{font-family:var(--mono);font-size:11px;letter-spacing:0.12em;color:var(--ink-dim);min-width:48px;text-align:center}
-.ccount span{color:var(--acc)}
-.cdiv{width:1px;height:18px;background:var(--line)}
-.ckey{font-family:var(--mono);font-size:9px;letter-spacing:0.16em;color:var(--ink-faint);padding:3px 7px;border:1px solid var(--line);border-radius:5px}
+/* corner ticks (subtle frame, no neon) */
+.tick{position:absolute;width:22px;height:22px;border:1px solid var(--hair-2);z-index:6;}
+.tick.tl{top:20px;left:20px;border-right:none;border-bottom:none;}
+.tick.tr{top:20px;right:20px;border-left:none;border-bottom:none;}
+.tick.bl{bottom:20px;left:20px;border-right:none;border-top:none;}
+.tick.br{bottom:20px;right:20px;border-left:none;border-top:none;}
 </style></head>
 <body>
 <div class="viewport"><div class="canvas" id="canvas">
 
-  <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+  <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
 
-  <!-- TOP BAR -->
+  <!-- TOP -->
   <div class="topbar">
     <div class="brand">
-      <svg class="logo" viewBox="0 0 32 32" fill="none"><path d="M16 2 L29 27 H21 L16 15 L11 27 H3 Z" fill="#B7F701"/></svg>
+      <svg class="mk" viewBox="0 0 32 32" fill="none"><path d="M16 3 L28 26 H21 L16 16 L11 26 H4 Z" fill="#C6F833"/></svg>
       <div class="nm">RE<b>VERT</b></div>
     </div>
-    <div class="sysmeta"><span class="dot"></span><span>URBAN CLIMB OS</span><span>·</span><span class="cur" id="screenLabel">01 SCAN</span></div>
+    <div class="sys"><span class="d"></span><span>URBAN CLIMBING OS</span><span>·</span><span class="cur" id="screenLabel">01 — SCAN</span></div>
   </div>
 
-  <div class="pdots" id="pdots">
-    <div class="pdot active" data-i="0"></div><div class="pdot" data-i="1"></div><div class="pdot" data-i="2"></div><div class="pdot" data-i="3"></div><div class="pdot" data-i="4"></div>
-  </div>
-
-  <!-- SIDE CAPTION / HINT -->
-  <div class="side-cap show" id="sideCap">
-    <div class="tag" id="capTag">SCREEN 01 / SCAN</div>
-    <div class="head" id="capHead">Read the <em>City</em>.</div>
-    <div class="body" id="capBody">Scan a building to analyze it into a climbable structure.</div>
-  </div>
-  <div class="side-hint show" id="sideHint">
-    <div class="lbl">INTERACTION <span>·</span> CLICK</div>
-    <div class="hlist" id="hintList"></div>
+  <!-- LEFT EDITORIAL -->
+  <div class="lead show" id="lead">
+    <div class="idx">STEP <b id="leadIdx">01</b> / 05</div>
+    <h1 id="leadHead">도시를 <em>읽다</em></h1>
+    <p id="leadBody">건물을 3D로 스캔해 높이·루트·난이도를 한 번에 분석합니다.</p>
+    <div class="step"><span id="leadKey">SCAN</span><span class="bar"><i id="leadBarFill"></i></span></div>
   </div>
 
   <!-- PHONE -->
   <div class="stage"><div class="phone"><div class="screen">
 
-    <!-- ============ PANEL 1 : SCAN ============ -->
+    <!-- ============ 1 · SCAN ============ -->
     <div class="panel active" data-p="scan">
-      <div class="scan-bg"></div>
-      <svg class="scan-svg" viewBox="0 0 300 600" preserveAspectRatio="xMidYMid slice">
-        <defs>
-          <linearGradient id="sc-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0c1408"/><stop offset="1" stop-color="#050803"/></linearGradient>
-          <linearGradient id="sc-fl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(183,247,1,0.16)"/><stop offset="1" stop-color="rgba(183,247,1,0.03)"/></linearGradient>
-          <linearGradient id="sc-fr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(120,170,0,0.12)"/><stop offset="1" stop-color="rgba(120,170,0,0.02)"/></linearGradient>
-        </defs>
-        <rect width="300" height="600" fill="url(#sc-sky)"/>
-        <g transform="translate(0,4)">
-
-        <!-- ===== 3D BUILDING (isometric wireframe, compact, in clear zone) ===== -->
-        <!-- left & right faces -->
-        <polygon points="150,168 106,189 106,250 150,271" fill="url(#sc-fl)" stroke="#B7F701" stroke-width="1.1" opacity="0.95"/>
-        <polygon points="150,168 194,189 194,250 150,271" fill="url(#sc-fr)" stroke="#B7F701" stroke-width="1.1" opacity="0.72"/>
-        <!-- roof -->
-        <polygon points="150,147 106,168 150,189 194,168" fill="rgba(183,247,1,0.18)" stroke="#B7F701" stroke-width="1.1" opacity="0.95"/>
-
-        <!-- floor lines -->
-        <g stroke="#B7F701" stroke-width="0.5" opacity="0.4">
-          <line x1="150" y1="210" x2="106" y2="231"/><line x1="150" y1="231" x2="106" y2="252"/>
-          <line x1="150" y1="210" x2="194" y2="231"/><line x1="150" y1="231" x2="194" y2="252"/>
-        </g>
-        <!-- vertical mullions -->
-        <g stroke="#B7F701" stroke-width="0.4" opacity="0.28">
-          <line x1="135" y1="175" x2="135" y2="257"/><line x1="121" y1="182" x2="121" y2="244"/>
-          <line x1="165" y1="175" x2="165" y2="257"/><line x1="179" y1="182" x2="179" y2="244"/>
-        </g>
-        <!-- front vertical edge -->
-        <line x1="150" y1="168" x2="150" y2="271" stroke="#D2FF3D" stroke-width="1.3" opacity="0.9" style="filter:drop-shadow(0 0 3px #B7F701)"/>
-
-        <!-- point cloud -->
-        <g fill="#B7F701" opacity="0.5">
-          <circle cx="124" cy="205" r="0.9"/><circle cx="116" cy="235" r="0.9"/><circle cx="134" cy="222" r="0.9"/>
-          <circle cx="176" cy="205" r="0.9"/><circle cx="184" cy="235" r="0.9"/><circle cx="166" cy="222" r="0.9"/>
-        </g>
-
-        <!-- climb route on the front edge -->
-        <path d="M150 266 L135 238 L166 212 L135 186 L150 173" stroke="#D2FF3D" stroke-width="1.4" fill="none" stroke-dasharray="3 3" opacity="0.9" style="filter:drop-shadow(0 0 4px #B7F701)"/>
-        <g fill="#050803" stroke="#B7F701" stroke-width="1.1">
-          <circle cx="135" cy="238" r="2.6"/><circle cx="166" cy="212" r="2.6"/><circle cx="135" cy="186" r="2.6"/>
-        </g>
-        <circle cx="150" cy="266" r="3" fill="#B7F701"/><circle cx="150" cy="173" r="3" fill="#B7F701"/>
-
-        <!-- vertex markers -->
-        <g fill="none" stroke="#D2FF3D" stroke-width="1">
-          <circle cx="150" cy="147" r="3"/><circle cx="106" cy="168" r="3"/><circle cx="194" cy="168" r="3"/>
-          <circle cx="106" cy="250" r="3"/><circle cx="194" cy="250" r="3"/><circle cx="150" cy="271" r="3"/>
-        </g>
-
-        <!-- ===== animated scan slice sweeping down ===== -->
-        <g opacity="0.9" style="filter:drop-shadow(0 0 6px #B7F701)">
-          <polygon points="150,168 106,189 150,210 194,189" fill="rgba(183,247,1,0.24)" stroke="#D2FF3D" stroke-width="2"/>
-          <animateTransform attributeName="transform" type="translate" from="0 0" to="0 82" dur="2.6s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values="0;0.95;0.95;0" keyTimes="0;0.1;0.9;1" dur="2.6s" repeatCount="indefinite"/>
-        </g>
-
-        <!-- height dimension on right -->
-        <g stroke="#B7F701" stroke-width="0.6" opacity="0.45">
-          <line x1="214" y1="168" x2="214" y2="271"/>
-          <line x1="210" y1="168" x2="218" y2="168"/><line x1="210" y1="271" x2="218" y2="271"/>
-        </g>
-      </g>
-      </svg>
-      <div class="scan-fc a"></div><div class="scan-fc b"></div>
-      <div class="statusbar"><span>9:41</span><div class="ic">
+      <div class="sb"><span>9:41</span><div class="ic">
         <svg width="15" height="9" viewBox="0 0 14 9"><path d="M1 8h1M3.5 6.5h1M6 5h1M8.5 3.5h1M11 2h1M1 8V8M3.5 8V6.5M6 8V5M8.5 8V3.5M11 8V2" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/></svg>
         <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="18" height="9" rx="2" stroke="#fff" stroke-opacity="0.5"/><rect x="2" y="2" width="14" height="6" rx="1" fill="#fff"/></svg>
       </div></div>
-      <div class="ph-head">
-        <div class="ph-eyebrow"><span class="pin">📍</span> 건물 스캔</div>
-        <div class="ph-title">서울역 <em>북측 타워</em></div>
-        <div class="scan-loc">서울 · 중구 · 37.555°N</div>
-      </div>
-      <div class="scan-badge"><span class="d"></span> 3D 구조 분석 중</div>
-      <div class="scan-sheet">
-        <div class="scan-hero">
-          <div class="scan-hero-main">
-            <div class="k">높이</div>
-            <div class="big">128<small>m</small></div>
+      <div class="stack">
+        <div class="shead">
+          <div class="eyebrow">건물 스캔</div>
+          <div class="title">서울역 <em>북측 타워</em></div>
+          <div class="subtitle">SEOUL · JUNG-GU · 37.555°N</div>
+        </div>
+        <!-- modular 3D viz card -->
+        <div class="viz">
+          <div class="badge"><span class="d"></span> 3D 구조 분석</div>
+          <div class="dim">128M</div>
+          <svg viewBox="0 0 312 250" preserveAspectRatio="xMidYMid meet">
+            <!-- isometric tower -->
+            <g transform="translate(156,128)">
+              <!-- faces -->
+              <polygon points="0,-78 -52,-50 -52,58 0,86" fill="rgba(198,248,51,.07)" stroke="#C6F833" stroke-width="1" opacity="0.9"/>
+              <polygon points="0,-78 52,-50 52,58 0,86" fill="rgba(198,248,51,.03)" stroke="#C6F833" stroke-width="1" opacity="0.62"/>
+              <polygon points="0,-78 -52,-50 0,-22 52,-50" fill="rgba(198,248,51,.10)" stroke="#C6F833" stroke-width="1" opacity="0.9"/>
+              <!-- floor lines -->
+              <g stroke="#C6F833" stroke-width="0.5" opacity="0.32">
+                <line x1="0" y1="5" x2="-52" y2="-23"/><line x1="0" y1="33" x2="-52" y2="5"/>
+                <line x1="0" y1="5" x2="52" y2="-23"/><line x1="0" y1="33" x2="52" y2="5"/>
+              </g>
+              <!-- vertical edge -->
+              <line x1="0" y1="-78" x2="0" y2="86" stroke="#C6F833" stroke-width="1" opacity="0.85"/>
+              <!-- mullions -->
+              <g stroke="#C6F833" stroke-width="0.4" opacity="0.22">
+                <line x1="-17" y1="-69" x2="-17" y2="73"/><line x1="-34" y1="-60" x2="-34" y2="64"/>
+                <line x1="17" y1="-69" x2="17" y2="73"/><line x1="34" y1="-60" x2="34" y2="64"/>
+              </g>
+              <!-- climb route -->
+              <path d="M0 80 L-16 50 L16 22 L-16 -8 L0 -34 L0 -72" stroke="#C6F833" stroke-width="1.3" fill="none" stroke-dasharray="3 3" opacity="0.85"/>
+              <g fill="#0A0A0A" stroke="#C6F833" stroke-width="1">
+                <circle cx="-16" cy="50" r="2.4"/><circle cx="16" cy="22" r="2.4"/><circle cx="-16" cy="-8" r="2.4"/><circle cx="0" cy="-34" r="2.4"/>
+              </g>
+              <circle cx="0" cy="80" r="2.8" fill="#C6F833"/><circle cx="0" cy="-72" r="2.8" fill="#C6F833"/>
+              <!-- vertices -->
+              <g fill="none" stroke="#C6F833" stroke-width="1" opacity="0.9">
+                <circle cx="0" cy="-78" r="2.6"/><circle cx="-52" cy="-50" r="2.6"/><circle cx="52" cy="-50" r="2.6"/>
+                <circle cx="-52" cy="58" r="2.6"/><circle cx="52" cy="58" r="2.6"/><circle cx="0" cy="86" r="2.6"/>
+              </g>
+              <!-- scan slice -->
+              <g opacity="0.85">
+                <polygon points="0,-78 -52,-50 0,-22 52,-50" fill="rgba(198,248,51,.18)" stroke="#C6F833" stroke-width="1.5"/>
+                <animateTransform attributeName="transform" type="translate" from="0 0" to="0 108" dur="2.8s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0;.9;.9;0" keyTimes="0;.12;.88;1" dur="2.8s" repeatCount="indefinite"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+        <!-- modular data card -->
+        <div class="card">
+          <div class="hero-m">
+            <div class="lead-n">128<small>m</small></div>
+            <div class="aside-n"><div class="k">난이도</div><div class="stars">★★★★<span class="o">★</span></div></div>
           </div>
-          <div class="scan-hero-side">
-            <div class="k">난이도</div>
-            <div class="stars">★★★★<span class="off">★</span></div>
+          <div class="trio" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--hair);">
+            <div class="m"><div class="k">루트</div><div class="v">5<small>개</small></div></div>
+            <div class="m"><div class="k">소요</div><div class="v acc">45<small>분</small></div></div>
+            <div class="m"><div class="k">성공률</div><div class="v">72<small>%</small></div></div>
           </div>
         </div>
-        <div class="scan-row">
-          <div class="scan-cell"><div class="k">루트</div><div class="v">5<small>개</small></div></div>
-          <div class="scan-cell"><div class="k">예상 시간</div><div class="v acc">45<small>분</small></div></div>
-          <div class="scan-cell"><div class="k">성공률</div><div class="v">72<small>%</small></div></div>
-        </div>
-        <button class="scan-cta-btn" data-act="next">내 루트에 추가 <span class="ar">→</span></button>
       </div>
+      <button class="cta" data-act="next">내 루트에 추가 <span class="ar">→</span></button>
       <div class="tabbar" data-tabs></div>
     </div>
 
-    <!-- ============ PANEL 2 : DECODE ============ -->
+    <!-- ============ 2 · DECODE ============ -->
     <div class="panel" data-p="decode">
-      <div class="decode-bg"></div>
-      <svg class="decode-svg" viewBox="0 0 300 600" preserveAspectRatio="xMidYMid slice">
-        <defs><pattern id="dg" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M34 0 L0 0 0 34" fill="none" stroke="rgba(183,247,1,0.05)" stroke-width="0.5"/></pattern></defs>
-        <rect width="300" height="600" fill="#070504"/><rect width="300" height="600" fill="url(#dg)"/>
-        <g stroke="#1c1814" stroke-width="6" fill="none" opacity="0.8"><path d="M-10 180 L320 230"/><path d="M-10 360 L320 400"/><path d="M40 60 L80 580"/><path d="M200 50 L240 580"/></g>
-        <g stroke="#15110d" stroke-width="3" fill="none"><path d="M-10 270 L320 300"/><path d="M120 60 L150 580"/></g>
-        <g fill="#0e0b08" stroke="#1a1510" stroke-width="0.5">
-          <rect x="55" y="120" width="40" height="50"/><rect x="130" y="130" width="45" height="48"/><rect x="200" y="120" width="42" height="55"/>
-          <rect x="60" y="310" width="48" height="50"/><rect x="150" y="305" width="40" height="58"/><rect x="215" y="315" width="40" height="48"/>
-          <rect x="70" y="450" width="44" height="55"/><rect x="160" y="455" width="50" height="50"/>
-        </g>
-        <path d="M84 145 L152 154 L221 147 L165 334 L84 335 L185 480" stroke="#B7F701" stroke-width="1.2" fill="none" stroke-dasharray="4 4" opacity="0.55" style="filter:drop-shadow(0 0 3px #B7F701)"/>
-      </svg>
-      <div class="map-pin done" style="top:26%;left:28%"><span class="rp"></span><span class="glyph">●</span></div>
-      <div class="map-pin scan" style="top:26%;left:51%"><span class="glyph">▲</span></div>
-      <div class="map-pin done" style="top:25%;left:74%"><span class="glyph">●</span></div>
-      <div class="map-pin fav" style="top:56%;left:55%"><span class="glyph">◇</span></div>
-      <div class="map-pin done" style="top:56%;left:28%"><span class="rp"></span><span class="glyph">●</span></div>
-      <div class="map-pin scan" style="top:80%;left:62%"><span class="glyph">▲</span></div>
-      <div class="statusbar"><span>9:41</span><div class="ic">
+      <div class="sb"><span>9:41</span><div class="ic">
         <svg width="15" height="9" viewBox="0 0 14 9"><path d="M1 8h1M3.5 6.5h1M6 5h1M8.5 3.5h1M11 2h1M1 8V8M3.5 8V6.5M6 8V5M8.5 8V3.5M11 8V2" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/></svg>
         <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="18" height="9" rx="2" stroke="#fff" stroke-opacity="0.5"/><rect x="2" y="2" width="14" height="6" rx="1" fill="#fff"/></svg>
       </div></div>
-      <div class="ph-head">
-        <div class="ph-eyebrow">◆ 도시 루트 맵</div>
-        <div class="ph-title">서울 <em>탐험 맵</em></div>
+      <div class="stack">
+        <div class="shead">
+          <div class="eyebrow">도시 루트 맵</div>
+          <div class="title">서울 <em>탐험 기록</em></div>
+        </div>
+        <div class="map">
+          <svg viewBox="0 0 264 300" preserveAspectRatio="xMidYMid slice">
+            <rect width="264" height="300" fill="#0d0d0d"/>
+            <g stroke="rgba(255,255,255,.05)" stroke-width="1"><path d="M-10 110 L274 130"/><path d="M-10 200 L274 220"/><path d="M70 20 L92 290"/><path d="M170 20 L192 290"/></g>
+            <g fill="#151515"><rect x="40" y="60" width="34" height="40"/><rect x="110" y="66" width="38" height="36"/><rect x="180" y="60" width="34" height="44"/><rect x="44" y="160" width="40" height="42"/><rect x="120" y="156" width="36" height="46"/><rect x="186" y="164" width="34" height="40"/><rect x="60" y="238" width="38" height="42"/><rect x="150" y="240" width="42" height="40"/></g>
+            <path d="M62 84 L128 90 L196 84 L150 182 L70 188 L172 260" stroke="#C6F833" stroke-width="1.2" fill="none" stroke-dasharray="4 5" opacity="0.45"/>
+          </svg>
+          <div class="pin done" style="top:28%;left:24%">●</div>
+          <div class="pin scan" style="top:28%;left:49%">▲</div>
+          <div class="pin done" style="top:27%;left:74%">●</div>
+          <div class="pin fav" style="top:60%;left:57%">◇</div>
+          <div class="pin done" style="top:62%;left:27%">●</div>
+          <div class="pin scan" style="top:86%;left:65%">▲</div>
+          <div class="legend">
+            <i class="done"><b>●</b> 정복</i><i><b>▲</b> 스캔</i><i><b>◇</b> 찜</i>
+          </div>
+        </div>
+        <div class="card">
+          <div class="trio">
+            <div class="m"><div class="k">총 등반</div><div class="v acc">24</div></div>
+            <div class="m"><div class="k">총 높이</div><div class="v">2,300<small>m</small></div></div>
+            <div class="m"><div class="k">지역</div><div class="v">12</div></div>
+          </div>
+        </div>
       </div>
-      <div class="map-legend">
-        <div class="lg"><b>●</b> 정복 완료</div>
-        <div class="lg"><b>▲</b> 스캔 완료</div>
-        <div class="lg"><b>◇</b> 찜</div>
-      </div>
-      <div class="decode-stats">
-        <div class="ds"><div class="k">총 등반</div><div class="v acc">24</div></div>
-        <div class="ds"><div class="k">총 높이</div><div class="v">2,300<small>m</small></div></div>
-        <div class="ds"><div class="k">지역</div><div class="v acc">12</div></div>
-      </div>
+      <button class="cta" data-act="next">등반 시작 <span class="ar">→</span></button>
       <div class="tabbar" data-tabs></div>
     </div>
 
-    <!-- ============ PANEL 3 : CLIMBING ============ -->
+    <!-- ============ 3 · CLIMBING ============ -->
     <div class="panel" data-p="climb">
-      <div class="climb-bg"></div>
-      <svg class="climb-svg" viewBox="0 0 300 600" preserveAspectRatio="xMidYMid slice">
-        <defs>
-          <linearGradient id="cl-w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a1611"/><stop offset="1" stop-color="#0a0807"/></linearGradient>
-        </defs>
-        <rect width="300" height="600" fill="#0a0807"/>
-        <polygon points="-40,600 90,40 210,40 340,600" fill="url(#cl-w)"/>
-        <g stroke="rgba(255,255,255,0.05)" stroke-width="0.6">
-          <line x1="60" y1="430" x2="240" y2="430"/><line x1="78" y1="300" x2="222" y2="300"/><line x1="92" y1="200" x2="208" y2="200"/><line x1="102" y1="130" x2="198" y2="130"/>
-          <line x1="120" y1="40" x2="60" y2="600"/><line x1="180" y1="40" x2="240" y2="600"/>
-        </g>
-        <g fill="rgba(210,255,120,0.07)">
-          <rect x="110" y="150" width="14" height="10"/><rect x="160" y="150" width="14" height="10"/>
-          <rect x="100" y="240" width="18" height="13"/><rect x="170" y="240" width="18" height="13"/>
-          <rect x="88" y="350" width="22" height="16"/><rect x="180" y="350" width="22" height="16"/>
-        </g>
-        <path d="M150 580 L132 470 L172 380 L138 280 L176 190 L150 90" stroke="#B7F701" stroke-width="3" fill="none" opacity="0.9" style="filter:drop-shadow(0 0 6px #B7F701)"/>
-        <path d="M150 580 L132 470 L172 380 L138 280 L176 190 L150 90" stroke="#E4FF8A" stroke-width="1" fill="none" stroke-dasharray="2 6"/>
-        <g>
-          <circle cx="172" cy="380" r="6" fill="none" stroke="#B7F701" stroke-width="1.5"/>
-          <circle cx="138" cy="280" r="9" fill="none" stroke="#B7F701" stroke-width="2"/>
-          <circle cx="138" cy="280" r="14" fill="none" stroke="#B7F701" stroke-width="0.8" opacity="0.5"/>
-          <circle cx="176" cy="190" r="6" fill="none" stroke="#B7F701" stroke-width="1.5"/>
-        </g>
-      </svg>
-      <div class="climb-vignette"></div>
-      <div class="statusbar"><span>9:41</span><div class="ic">
+      <div class="sb"><span>9:41</span><div class="ic">
         <svg width="15" height="9" viewBox="0 0 14 9"><path d="M1 8h1M3.5 6.5h1M6 5h1M8.5 3.5h1M11 2h1M1 8V8M3.5 8V6.5M6 8V5M8.5 8V3.5M11 8V2" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/></svg>
         <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="18" height="9" rx="2" stroke="#fff" stroke-opacity="0.5"/><rect x="2" y="2" width="14" height="6" rx="1" fill="#fff"/></svg>
       </div></div>
-      <div class="rec"><span class="d"></span> REC</div>
-      <div class="climb-time">12:47</div>
-      <div class="ar-tag" style="top:46%;left:30%">◇ 다음 홀드</div>
-      <div class="ar-tag" style="top:30%;left:58%">↑ 2.4m</div>
-      <div class="climb-rail">
-        <div class="cstat"><div class="k">현재 높이</div><div class="v acc">32<small>m</small></div></div>
-        <div class="cstat"><div class="k">상승 속도</div><div class="v">1.2<small>m/s</small></div></div>
-        <div class="cstat"><div class="k">심박수</div><div class="v hr"><svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor"><path d="M8 14l-5.5-5.5a3.2 3.2 0 014.5-4.5L8 5l1-1a3.2 3.2 0 014.5 4.5L8 14z"/></svg>125</div></div>
+      <div class="stack">
+        <div class="shead">
+          <div class="eyebrow">라이브 등반</div>
+          <div class="title">서울역 <em>북측 타워</em></div>
+        </div>
+        <div class="pov">
+          <svg viewBox="0 0 264 300" preserveAspectRatio="xMidYMid slice">
+            <rect width="264" height="300" fill="#0d0d0d"/>
+            <polygon points="-30,300 84,30 180,30 294,300" fill="#121212"/>
+            <g stroke="rgba(255,255,255,.05)" stroke-width="0.6">
+              <line x1="60" y1="210" x2="204" y2="210"/><line x1="78" y1="140" x2="186" y2="140"/><line x1="92" y1="90" x2="172" y2="90"/>
+              <line x1="108" y1="30" x2="60" y2="300"/><line x1="156" y1="30" x2="204" y2="300"/>
+            </g>
+            <g fill="rgba(255,255,255,.05)"><rect x="96" y="110" width="14" height="10"/><rect x="154" y="110" width="14" height="10"/><rect x="86" y="180" width="20" height="14"/><rect x="158" y="180" width="20" height="14"/></g>
+            <path d="M132 290 L116 220 L156 160 L120 100 L150 40" stroke="#C6F833" stroke-width="2.4" fill="none" opacity="0.92"/>
+            <path d="M132 290 L116 220 L156 160 L120 100 L150 40" stroke="#0A0A0A" stroke-width="0.8" fill="none" stroke-dasharray="2 6"/>
+            <circle cx="156" cy="160" r="6" fill="none" stroke="#C6F833" stroke-width="1.6"/>
+            <circle cx="120" cy="100" r="8" fill="none" stroke="#C6F833" stroke-width="2"/>
+          </svg>
+          <div class="rec"><span class="d"></span> REC</div>
+          <div class="tc">12:47</div>
+          <div class="prog">
+            <div class="r"><span class="k">루트 진행률</span><span class="p">68%</span></div>
+            <div class="track"><i></i></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="trio">
+            <div class="m"><div class="k">현재 높이</div><div class="v acc">32<small>m</small></div></div>
+            <div class="m"><div class="k">상승 속도</div><div class="v">1.2<small>m/s</small></div></div>
+            <div class="m"><div class="k">심박수</div><div class="v">125</div></div>
+          </div>
+        </div>
       </div>
-      <div class="climb-prog">
-        <div class="row"><span class="lbl">루트 진행률</span><span class="pct">68%</span></div>
-        <div class="bar"><i></i></div>
-      </div>
+      <button class="cta" data-act="next">기록 분석 <span class="ar">→</span></button>
       <div class="tabbar" data-tabs></div>
     </div>
 
-    <!-- ============ PANEL 4 : REPLAY ============ -->
+    <!-- ============ 4 · REPLAY ============ -->
     <div class="panel" data-p="replay">
-      <div class="replay-bg"></div>
-      <div class="statusbar"><span>9:41</span><div class="ic">
+      <div class="sb"><span>9:41</span><div class="ic">
         <svg width="15" height="9" viewBox="0 0 14 9"><path d="M1 8h1M3.5 6.5h1M6 5h1M8.5 3.5h1M11 2h1M1 8V8M3.5 8V6.5M6 8V5M8.5 8V3.5M11 8V2" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/></svg>
         <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="18" height="9" rx="2" stroke="#fff" stroke-opacity="0.5"/><rect x="2" y="2" width="14" height="6" rx="1" fill="#fff"/></svg>
       </div></div>
-      <div class="ph-head">
-        <div class="ph-eyebrow">◆ 퍼포먼스 분석</div>
-        <div class="ph-title">오늘의 <em>등반</em></div>
-      </div>
-      <div class="replay-traj">
-        <span class="traj-badge">3D 궤적 · 리플레이</span>
-        <svg viewBox="0 0 268 128" preserveAspectRatio="xMidYMid meet">
-          <g stroke="rgba(255,255,255,0.06)" stroke-width="0.5"><line x1="20" y1="18" x2="248" y2="18"/><line x1="20" y1="64" x2="248" y2="64"/><line x1="20" y1="110" x2="248" y2="110"/></g>
-          <path d="M40 112 C70 104 60 52 95 60 C130 68 120 26 160 34 C200 42 195 22 230 20" stroke="#B7F701" stroke-width="2" fill="none" style="filter:drop-shadow(0 0 4px #B7F701)"/>
-          <path d="M40 112 C70 104 60 52 95 60 C130 68 120 26 160 34 C200 42 195 22 230 20" stroke="#fff" stroke-width="0.6" fill="none" opacity="0.4" stroke-dasharray="2 4"/>
-          <circle cx="40" cy="112" r="3" fill="#B7F701"/><circle cx="160" cy="34" r="4" fill="#070504" stroke="#B7F701" stroke-width="1.5"/><circle cx="230" cy="20" r="3.5" fill="#B7F701"/>
-        </svg>
-        <div class="traj-play"><svg width="11" height="11" viewBox="0 0 12 12"><path d="M3 2l6 4-6 4V2z" fill="currentColor"/></svg></div>
-      </div>
-      <div class="replay-graphs">
-        <div class="gr"><span class="gk">속도</span><span class="gbar"><svg viewBox="0 0 230 16" preserveAspectRatio="none"><polyline points="0,13 25,9 50,11 75,5 100,8 125,4 150,6 175,5 200,7 230,3" fill="none" stroke="#B7F701" stroke-width="1.5"/></svg></span></div>
-        <div class="gr"><span class="gk">고도</span><span class="gbar"><svg viewBox="0 0 230 16" preserveAspectRatio="none"><polyline points="0,14 25,13 50,11 75,10 100,7 125,6 150,5 175,4 200,3 230,2" fill="none" stroke="#D2FF3D" stroke-width="1.5"/></svg></span></div>
-        <div class="gr"><span class="gk">심박</span><span class="gbar"><svg viewBox="0 0 230 16" preserveAspectRatio="none"><polyline points="0,9 20,8 40,10 55,4 70,11 90,7 110,9 130,3 150,10 170,6 190,9 210,5 230,8" fill="none" stroke="#ff4d4d" stroke-width="1.3"/></svg></span></div>
-      </div>
-      <div class="replay-ai">
-        <div class="grade">A+</div>
-        <div class="aih">AI 분석</div>
-        <div class="ai-grid">
-          <div class="ai-cell"><div class="k">최고 퍼포먼스</div><div class="v acc">14:23</div></div>
-          <div class="ai-cell"><div class="k">효율적 무브</div><div class="v">벽면 전환</div></div>
-          <div class="ai-cell"><div class="k">안정성 점수</div><div class="v big">89</div></div>
-          <div class="ai-cell"><div class="k">종합 등급</div><div class="v big acc">A+</div></div>
+      <div class="stack">
+        <div class="shead">
+          <div class="eyebrow">퍼포먼스 분석</div>
+          <div class="title">오늘의 <em>등반</em></div>
+        </div>
+        <div class="traj">
+          <span class="bd">3D 궤적 · 리플레이</span>
+          <svg viewBox="0 0 264 118" preserveAspectRatio="none">
+            <g stroke="rgba(255,255,255,.05)" stroke-width="0.6"><line x1="0" y1="30" x2="264" y2="30"/><line x1="0" y1="64" x2="264" y2="64"/><line x1="0" y1="98" x2="264" y2="98"/></g>
+            <path d="M28 100 C60 92 52 48 90 56 C128 64 118 26 158 32 C198 38 196 20 236 18" stroke="#C6F833" stroke-width="2" fill="none"/>
+            <circle cx="28" cy="100" r="3" fill="#C6F833"/><circle cx="158" cy="32" r="3.5" fill="#0A0A0A" stroke="#C6F833" stroke-width="1.4"/><circle cx="236" cy="18" r="3" fill="#C6F833"/>
+          </svg>
+          <div class="pl"><svg width="11" height="11" viewBox="0 0 12 12"><path d="M3 2l6 4-6 4V2z" fill="currentColor"/></svg></div>
+        </div>
+        <div class="card">
+          <div class="glines">
+            <div class="gl"><span class="k">속도</span><span class="b"><svg viewBox="0 0 230 14" preserveAspectRatio="none"><polyline points="0,12 26,8 52,10 78,4 104,7 130,3 156,5 182,4 208,6 230,2" fill="none" stroke="#C6F833" stroke-width="1.5"/></svg></span></div>
+            <div class="gl"><span class="k">고도</span><span class="b"><svg viewBox="0 0 230 14" preserveAspectRatio="none"><polyline points="0,12 26,11 52,10 78,9 104,6 130,5 156,4 182,3 208,3 230,2" fill="none" stroke="#7E9E1F" stroke-width="1.5"/></svg></span></div>
+            <div class="gl"><span class="k">심박</span><span class="b"><svg viewBox="0 0 230 14" preserveAspectRatio="none"><polyline points="0,8 20,7 40,9 55,3 70,10 90,6 110,8 130,2 150,9 170,5 190,8 210,4 230,7" fill="none" stroke="#5C5C56" stroke-width="1.3"/></svg></span></div>
+          </div>
+          <div class="aigrid" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--hair);">
+            <div class="c"><div class="k">최고 퍼포먼스</div><div class="v acc">14:23</div></div>
+            <div class="c"><div class="k">효율적 무브</div><div class="v">벽면 전환</div></div>
+            <div class="c"><div class="k">안정성 점수</div><div class="v big">89</div></div>
+            <div class="c"><div class="k">종합 등급</div><div class="v big acc">A+</div></div>
+          </div>
         </div>
       </div>
       <div class="tabbar" data-tabs></div>
     </div>
 
-    <!-- ============ PANEL 5 : COMMUNITY ============ -->
+    <!-- ============ 5 · COMMUNITY ============ -->
     <div class="panel" data-p="community">
-      <div class="comm-bg"></div>
-      <div class="statusbar"><span>9:41</span><div class="ic">
+      <div class="sb"><span>9:41</span><div class="ic">
         <svg width="15" height="9" viewBox="0 0 14 9"><path d="M1 8h1M3.5 6.5h1M6 5h1M8.5 3.5h1M11 2h1M1 8V8M3.5 8V6.5M6 8V5M8.5 8V3.5M11 8V2" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/></svg>
         <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="18" height="9" rx="2" stroke="#fff" stroke-opacity="0.5"/><rect x="2" y="2" width="14" height="6" rx="1" fill="#fff"/></svg>
       </div></div>
-      <div class="ph-head">
-        <div class="ph-eyebrow">◆ 도시 정복 피드</div>
-        <div class="ph-title"><em>커뮤니티</em></div>
-      </div>
-      <div class="comm-feed">
-        <div class="challenge">
-          <div class="ck">이번 주 · 챌린지</div>
-          <div class="ct">이번 주 최고 높이</div>
-          <span class="cr">🏆 TOP 10 · 348m</span>
+      <div class="stack">
+        <div class="shead">
+          <div class="eyebrow">도시 정복 피드</div>
+          <div class="title"><em>커뮤니티</em></div>
         </div>
-        <div class="fcard">
-          <div class="fc-user"><div class="fc-av"></div><div class="fc-un">@yuna.k <span class="dim">· 서울</span></div><div class="fc-tm">2시간 전</div></div>
-          <div class="fc-vid">
-            <svg viewBox="0 0 300 188" preserveAspectRatio="xMidYMid slice">
-              <defs><linearGradient id="cv1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c1712"/><stop offset="1" stop-color="#070504"/></linearGradient></defs>
-              <rect width="300" height="188" fill="url(#cv1)"/>
-              <polygon points="0,8 110,70 110,188 0,188" fill="#100c08"/><polygon points="300,8 190,70 190,188 300,188" fill="#100c08"/>
-              <path d="M150 185 L138 130 L160 80 L145 30" stroke="#B7F701" stroke-width="1.6" fill="none" stroke-dasharray="2 3" style="filter:drop-shadow(0 0 4px #B7F701)"/>
-              <circle cx="150" cy="185" r="3" fill="#B7F701"/><circle cx="145" cy="30" r="3" fill="#B7F701"/>
-            </svg>
-            <div class="fc-playb"><svg width="13" height="13" viewBox="0 0 12 12"><path d="M3 2l6 4-6 4V2z" fill="#fff"/></svg></div>
-            <div class="fc-score">93</div>
-            <div class="fc-vlabel"><div class="bn">서울역 북측 타워</div><div class="diff">★★★★<span class="off">★</span></div></div>
+        <div class="feed">
+          <div class="chal">
+            <div class="k">이번 주 · 챌린지</div>
+            <div class="t">최고 높이 정복</div>
+            <span class="r">🏆 TOP 10 · 348m</span>
           </div>
-          <div class="fc-act">
-            <div class="fa liked"><svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 14l-5.5-5.5a3.2 3.2 0 014.5-4.5L8 5l1-1a3.2 3.2 0 014.5 4.5L8 14z"/></svg>248</div>
-            <div class="fa"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 5a2 2 0 012-2h6a2 2 0 012 2v4a2 2 0 01-2 2H7l-3 2v-2H5a2 2 0 01-2-2V5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>17</div>
-            <div class="fa save"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M4 3h8v11l-4-3-4 3V3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+          <div class="post">
+            <div class="u"><div class="av"></div><div class="un">@yuna.k <span class="d">· 서울</span></div><div class="tm">2시간 전</div></div>
+            <div class="v">
+              <svg viewBox="0 0 264 165" preserveAspectRatio="xMidYMid slice"><rect width="264" height="165" fill="#101010"/><polygon points="0,8 96,62 96,165 0,165" fill="#161616"/><polygon points="264,8 168,62 168,165 264,165" fill="#161616"/><path d="M132 162 L120 112 L142 70 L128 26" stroke="#C6F833" stroke-width="1.6" fill="none" stroke-dasharray="2 3"/><circle cx="132" cy="162" r="3" fill="#C6F833"/><circle cx="128" cy="26" r="3" fill="#C6F833"/></svg>
+              <div class="pl"><svg width="13" height="13" viewBox="0 0 12 12"><path d="M3 2l6 4-6 4V2z" fill="#fff"/></svg></div>
+              <div class="sc">93</div>
+              <div class="nm"><div class="b">서울역 북측 타워</div><div class="s">★★★★<span class="o">★</span></div></div>
+            </div>
+            <div class="a">
+              <i class="lk"><svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 14l-5.5-5.5a3.2 3.2 0 014.5-4.5L8 5l1-1a3.2 3.2 0 014.5 4.5L8 14z"/></svg>248</i>
+              <i><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 5a2 2 0 012-2h6a2 2 0 012 2v4a2 2 0 01-2 2H7l-3 2v-2H5a2 2 0 01-2-2V5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>17</i>
+              <i class="sv"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M4 3h8v11l-4-3-4 3V3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></i>
+            </div>
           </div>
-        </div>
-        <div class="fcard">
-          <div class="fc-user"><div class="fc-av"></div><div class="fc-un">@minho <span class="dim">· 압구정</span></div><div class="fc-tm">5시간 전</div></div>
-          <div class="fc-vid">
-            <svg viewBox="0 0 300 188" preserveAspectRatio="xMidYMid slice">
-              <defs><radialGradient id="cv2" cx="0.5" cy="0.1" r="0.5"><stop offset="0" stop-color="rgba(183,247,1,0.4)"/><stop offset="1" stop-color="rgba(183,247,1,0)"/></radialGradient></defs>
-              <rect width="300" height="188" fill="#0c0908"/><ellipse cx="150" cy="10" rx="120" ry="50" fill="url(#cv2)"/>
-              <polygon points="125,4 175,4 168,188 132,188" fill="#0f0b07"/>
-              <path d="M150 185 L138 120 L158 60 L148 10" stroke="#B7F701" stroke-width="1.6" fill="none" stroke-dasharray="2 3" style="filter:drop-shadow(0 0 4px #B7F701)"/>
-              <circle cx="150" cy="185" r="3" fill="#B7F701"/><circle cx="148" cy="10" r="3" fill="#B7F701"/>
-            </svg>
-            <div class="fc-playb"><svg width="13" height="13" viewBox="0 0 12 12"><path d="M3 2l6 4-6 4V2z" fill="#fff"/></svg></div>
-            <div class="fc-score">96</div>
-            <div class="fc-vlabel"><div class="bn">압구정 스카이라인</div><div class="diff">★★★★★</div></div>
-          </div>
-          <div class="fc-act">
-            <div class="fa"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 14l-5.5-5.5a3.2 3.2 0 014.5-4.5L8 5l1-1a3.2 3.2 0 014.5 4.5L8 14z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>1.2K</div>
-            <div class="fa"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 5a2 2 0 012-2h6a2 2 0 012 2v4a2 2 0 01-2 2H7l-3 2v-2H5a2 2 0 01-2-2V5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>89</div>
-            <div class="fa save"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M4 3h8v11l-4-3-4 3V3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+          <div class="post">
+            <div class="u"><div class="av"></div><div class="un">@minho <span class="d">· 압구정</span></div><div class="tm">5시간 전</div></div>
+            <div class="v">
+              <svg viewBox="0 0 264 165" preserveAspectRatio="xMidYMid slice"><rect width="264" height="165" fill="#0e0e0e"/><polygon points="110,4 154,4 148,165 116,165" fill="#161616"/><path d="M132 162 L120 104 L140 52 L130 10" stroke="#C6F833" stroke-width="1.6" fill="none" stroke-dasharray="2 3"/><circle cx="132" cy="162" r="3" fill="#C6F833"/><circle cx="130" cy="10" r="3" fill="#C6F833"/></svg>
+              <div class="pl"><svg width="13" height="13" viewBox="0 0 12 12"><path d="M3 2l6 4-6 4V2z" fill="#fff"/></svg></div>
+              <div class="sc">96</div>
+              <div class="nm"><div class="b">압구정 스카이라인</div><div class="s">★★★★★</div></div>
+            </div>
+            <div class="a">
+              <i><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 14l-5.5-5.5a3.2 3.2 0 014.5-4.5L8 5l1-1a3.2 3.2 0 014.5 4.5L8 14z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>1.2K</i>
+              <i><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 5a2 2 0 012-2h6a2 2 0 012 2v4a2 2 0 01-2 2H7l-3 2v-2H5a2 2 0 01-2-2V5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>89</i>
+              <i class="sv"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M4 3h8v11l-4-3-4 3V3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></i>
+            </div>
           </div>
         </div>
       </div>
@@ -601,6 +530,12 @@ body{display:flex;align-items:center;justify-content:center;}
     </div>
 
   </div></div></div>
+
+  <!-- RIGHT HINTS -->
+  <div class="aside show" id="aside">
+    <div class="lbl">INTERACTION <span>·</span> KEYS</div>
+    <div class="row" id="asideRow"></div>
+  </div>
 
   <!-- CONTROLS -->
   <div class="controls">
@@ -622,27 +557,27 @@ body{display:flex;align-items:center;justify-content:center;}
   fit(); addEventListener('resize', fit);
 
   const screens=[
-    {key:'scan', name:'01 SCAN', tag:'화면 01 / 스캔', head:'도시를 <em>읽다</em>.',
-     body:'건물을 3D로 스캔해 높이·루트·난이도를 실시간 분석합니다.', hint:['건물 분석 →','내 루트에 추가']},
-    {key:'decode', name:'02 DECODE', tag:'화면 02 / 루트 맵', head:'<em>탐험</em>을 설계하다.',
-     body:'발견한 도시를 컬렉션처럼 지도 위에 기록합니다.', hint:['핀 선택 →','등반 시작']},
-    {key:'climb', name:'03 CLIMBING', tag:'화면 03 / 라이브', head:'도시를 <em>오르다</em>.',
-     body:'POV 카메라 위에 AR 루트와 신체 데이터를 중첩합니다.', hint:['실시간 HUD','기록 분석 →']},
-    {key:'replay', name:'04 REPLAY', tag:'화면 04 / 분석', head:'오늘을 <em>복기하다</em>.',
-     body:'3D 궤적과 AI 분석으로 퍼포먼스를 리뷰합니다.', hint:['궤적 재생','피드 공유 →']},
-    {key:'community', name:'05 COMMUNITY', tag:'화면 05 / 커뮤니티', head:'경험을 <em>나누다</em>.',
-     body:'정복한 도시를 피드로 공유하고 챌린지에 참여합니다.', hint:['← 처음으로','새 스캔']},
+    {name:'01 — SCAN', key:'SCAN', head:'도시를 <em>읽다</em>', body:'건물을 3D로 스캔해 높이·루트·난이도를 한 번에 분석합니다.',
+     hint:[['SCAN','구조 분석'],['→','내 루트에 추가']]},
+    {name:'02 — DECODE', key:'DECODE', head:'<em>탐험</em>을 설계하다', body:'발견한 도시를 컬렉션처럼 지도 위에 기록합니다.',
+     hint:[['PIN','루트 선택'],['→','등반 시작']]},
+    {name:'03 — CLIMBING', key:'CLIMB', head:'도시를 <em>오르다</em>', body:'POV 위에 AR 루트와 신체 데이터를 실시간 중첩합니다.',
+     hint:[['HUD','실시간 데이터'],['→','기록 분석']]},
+    {name:'04 — REPLAY', key:'REPLAY', head:'오늘을 <em>복기하다</em>', body:'3D 궤적과 AI 분석으로 퍼포먼스를 리뷰합니다.',
+     hint:[['▶','궤적 재생'],['→','피드 공유']]},
+    {name:'05 — COMMUNITY', key:'FEED', head:'경험을 <em>나누다</em>', body:'정복한 도시를 피드로 공유하고 챌린지에 참여합니다.',
+     hint:[['1','처음으로'],['F','전체화면']]},
   ];
 
   const panels=[...canvas.querySelectorAll('.panel')];
-  const pdots=[...canvas.querySelectorAll('.pdot')];
   const screenLabel=canvas.querySelector('#screenLabel');
   const curNum=canvas.querySelector('#curNum');
-  const capTag=canvas.querySelector('#capTag'), capHead=canvas.querySelector('#capHead'), capBody=canvas.querySelector('#capBody');
-  const sideCap=canvas.querySelector('#sideCap'), sideHint=canvas.querySelector('#sideHint'), hintList=canvas.querySelector('#hintList');
+  const lead=canvas.querySelector('#lead'), aside=canvas.querySelector('#aside');
+  const leadIdx=canvas.querySelector('#leadIdx'), leadHead=canvas.querySelector('#leadHead'),
+        leadBody=canvas.querySelector('#leadBody'), leadKey=canvas.querySelector('#leadKey'),
+        leadBarFill=canvas.querySelector('#leadBarFill'), asideRow=canvas.querySelector('#asideRow');
   let cur=0, busy=false;
 
-  /* shared tab bar markup injected into each panel */
   const TABS=[
     {go:0,label:'스캔',svg:'<rect x="3" y="5" width="14" height="11" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="10.5" r="3" stroke="currentColor" stroke-width="1.5"/>'},
     {go:1,label:'맵',svg:'<path d="M3 4l5 2 4-2 5 2v12l-5-2-4 2-5-2V4z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>'},
@@ -653,16 +588,19 @@ body{display:flex;align-items:center;justify-content:center;}
   panels.forEach((panel,pi)=>{
     const bar=panel.querySelector('[data-tabs]');
     if(!bar) return;
-    bar.innerHTML=TABS.map(t=>`<div class="tab${t.go===pi?' on':''}" data-go="${t.go}"><div class="ti"><svg width="17" height="17" viewBox="0 0 20 20" fill="none">${t.svg}</svg></div><div class="tl">${t.label}</div></div>`).join('');
+    bar.innerHTML=TABS.map(t=>`<div class="tab${t.go===pi?' on':''}" data-go="${t.go}"><div class="ti"><svg width="18" height="18" viewBox="0 0 20 20" fill="none">${t.svg}</svg></div><div class="tl">${t.label}</div></div>`).join('');
   });
 
-  function updateCaption(i){
-    sideCap.classList.remove('show'); sideHint.classList.remove('show');
+  function paintLead(i){
+    lead.classList.remove('show'); aside.classList.remove('show');
     setTimeout(()=>{
-      capTag.textContent=screens[i].tag; capHead.innerHTML=screens[i].head; capBody.textContent=screens[i].body;
-      hintList.innerHTML=screens[i].hint.map(h=>`<div class="hitem">${h.replace('→','<span class="ar">→</span>').replace('←','<span class="ar">←</span>')}</div>`).join('');
-      sideCap.classList.add('show'); sideHint.classList.add('show');
-    },200);
+      const s=screens[i];
+      leadIdx.textContent=String(i+1).padStart(2,'0');
+      leadHead.innerHTML=s.head; leadBody.textContent=s.body; leadKey.textContent=s.key;
+      leadBarFill.style.width=((i+1)/screens.length*100)+'%';
+      asideRow.innerHTML=s.hint.map(h=>`<div class="it"><span class="kbd">${h[0]}</span><span class="tx">${h[1]}</span></div>`).join('');
+      lead.classList.add('show'); aside.classList.add('show');
+    },180);
   }
 
   function goTo(i){
@@ -670,19 +608,16 @@ body{display:flex;align-items:center;justify-content:center;}
     busy=true;
     panels[cur].classList.remove('active');
     panels[i].classList.add('active');
-    pdots.forEach((d,k)=>{ d.classList.remove('active','passed'); if(k===i)d.classList.add('active'); else if(k<i)d.classList.add('passed'); });
     screenLabel.textContent=screens[i].name;
     curNum.textContent=String(i+1).padStart(2,'0');
-    updateCaption(i);
+    paintLead(i);
     cur=i;
-    setTimeout(()=>busy=false,520);
+    setTimeout(()=>busy=false,480);
   }
-  function next(){ goTo(cur+1); }
-  function prev(){ goTo(cur-1); }
+  const next=()=>goTo(cur+1), prev=()=>goTo(cur-1);
 
   canvas.querySelector('#nextBtn').addEventListener('click',next);
   canvas.querySelector('#prevBtn').addEventListener('click',prev);
-  pdots.forEach((d,i)=>d.addEventListener('click',()=>goTo(i)));
   canvas.addEventListener('click',e=>{
     const go=e.target.closest('[data-go]'); if(go){ goTo(+go.dataset.go); return; }
     const act=e.target.closest('[data-act="next"]'); if(act){ next(); }
@@ -694,7 +629,7 @@ body{display:flex;align-items:center;justify-content:center;}
     else if(e.key>='1'&&e.key<='5'){ goTo(+e.key-1); }
   });
 
-  updateCaption(0);
+  paintLead(0);
 })();
 </script>
 </body></html>
