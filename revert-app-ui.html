@@ -123,6 +123,8 @@ body{display:flex;align-items:center;justify-content:center;}
 .hud-rail.left{left:14px;}
 .hud-rail.right{right:14px;align-items:flex-end;}
 .hud-stat{background:rgba(10,8,6,0.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border:1px solid var(--line);border-radius:12px;padding:8px 11px;min-width:78px;}
+.panel[data-p="scan"] .ph-title{font-size:21px;}
+.panel[data-p="scan"] .hud-stat{min-width:70px;padding:7px 9px;background:rgba(8,12,4,0.62);}
 .hud-stat .k{font-family:var(--mono);font-size:7px;letter-spacing:0.2em;color:var(--ink-dim);text-transform:uppercase;margin-bottom:3px;}
 .hud-stat .v{font-size:17px;font-weight:700;letter-spacing:-0.02em;line-height:1;}
 .hud-stat .v small{font-size:9px;font-weight:500;color:var(--ink-dim);margin-left:1px;}
@@ -298,53 +300,98 @@ body{display:flex;align-items:center;justify-content:center;}
       <div class="scan-bg"></div>
       <svg class="scan-svg" viewBox="0 0 300 600" preserveAspectRatio="xMidYMid slice">
         <defs>
-          <linearGradient id="sc-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#15120e"/><stop offset="1" stop-color="#070504"/></linearGradient>
-          <linearGradient id="sc-b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0f0c09"/><stop offset="1" stop-color="#040302"/></linearGradient>
+          <linearGradient id="sc-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0c1408"/><stop offset="1" stop-color="#050803"/></linearGradient>
+          <linearGradient id="sc-fl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(183,247,1,0.16)"/><stop offset="1" stop-color="rgba(183,247,1,0.03)"/></linearGradient>
+          <linearGradient id="sc-fr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(120,170,0,0.12)"/><stop offset="1" stop-color="rgba(120,170,0,0.02)"/></linearGradient>
         </defs>
         <rect width="300" height="600" fill="url(#sc-sky)"/>
-        <g opacity="0.25" stroke="#B7F701" stroke-width="0.4">
-          <line x1="0" y1="250" x2="300" y2="250"/><line x1="0" y1="330" x2="300" y2="330"/><line x1="0" y1="410" x2="300" y2="410"/><line x1="0" y1="490" x2="300" y2="490"/>
+        <!-- ground reference grid (perspective) -->
+        <g stroke="rgba(183,247,1,0.10)" stroke-width="0.5">
+          <line x1="-20" y1="545" x2="320" y2="560"/><line x1="-20" y1="575" x2="320" y2="595"/>
+          <line x1="60" y1="520" x2="20" y2="600"/><line x1="150" y1="520" x2="150" y2="600"/><line x1="240" y1="520" x2="280" y2="600"/>
         </g>
-        <polygon points="105,150 195,150 205,560 95,560" fill="url(#sc-b)" stroke="#B7F701" stroke-width="0.8" opacity="0.9"/>
-        <polygon points="105,150 195,150 188,130 112,130" fill="#0f0c09" stroke="#B7F701" stroke-width="0.8" opacity="0.9"/>
-        <g stroke="#B7F701" stroke-width="0.5" opacity="0.55">
-          <line x1="99" y1="220" x2="201" y2="220"/><line x1="98" y1="290" x2="202" y2="290"/>
-          <line x1="97" y1="360" x2="203" y2="360"/><line x1="96" y1="430" x2="204" y2="430"/><line x1="95.5" y1="500" x2="204.5" y2="500"/>
-          <line x1="150" y1="130" x2="150" y2="560"/><line x1="125" y1="150" x2="122" y2="560"/><line x1="175" y1="150" x2="178" y2="560"/>
+
+        <!-- ===== 3D BUILDING (isometric wireframe being scanned) ===== -->
+        <!-- left & right faces -->
+        <polygon points="150,175 92,205 92,530 150,500" fill="url(#sc-fl)" stroke="#B7F701" stroke-width="1" opacity="0.95"/>
+        <polygon points="150,175 208,205 208,530 150,500" fill="url(#sc-fr)" stroke="#B7F701" stroke-width="1" opacity="0.7"/>
+        <!-- roof -->
+        <polygon points="150,175 92,205 150,235 208,205" fill="rgba(183,247,1,0.18)" stroke="#B7F701" stroke-width="1" opacity="0.95"/>
+
+        <!-- floor lines (left face) -->
+        <g stroke="#B7F701" stroke-width="0.45" opacity="0.4">
+          <line x1="150" y1="221" x2="92" y2="251"/><line x1="150" y1="267" x2="92" y2="297"/>
+          <line x1="150" y1="313" x2="92" y2="343"/><line x1="150" y1="360" x2="92" y2="390"/>
+          <line x1="150" y1="406" x2="92" y2="436"/><line x1="150" y1="453" x2="92" y2="483"/>
+          <!-- right face -->
+          <line x1="150" y1="221" x2="208" y2="251"/><line x1="150" y1="267" x2="208" y2="297"/>
+          <line x1="150" y1="313" x2="208" y2="343"/><line x1="150" y1="360" x2="208" y2="390"/>
+          <line x1="150" y1="406" x2="208" y2="436"/><line x1="150" y1="453" x2="208" y2="483"/>
         </g>
-        <g fill="#B7F701">
-          <circle cx="105" cy="150" r="2.2"/><circle cx="195" cy="150" r="2.2"/><circle cx="205" cy="560" r="2.2"/><circle cx="95" cy="560" r="2.2"/>
-          <circle cx="150" cy="130" r="2.6" opacity="0.9"/>
+        <!-- vertical mullions -->
+        <g stroke="#B7F701" stroke-width="0.4" opacity="0.3">
+          <line x1="131" y1="185" x2="131" y2="510"/><line x1="112" y1="195" x2="112" y2="520"/>
+          <line x1="169" y1="185" x2="169" y2="510"/><line x1="188" y1="195" x2="188" y2="520"/>
         </g>
-        <path d="M150 545 L128 480 L168 420 L132 350 L172 285 L140 215 L155 150" stroke="#D2FF3D" stroke-width="1.4" fill="none" stroke-dasharray="3 3" style="filter:drop-shadow(0 0 4px #B7F701)"/>
-        <g fill="#070504" stroke="#B7F701" stroke-width="1.2">
-          <circle cx="128" cy="480" r="3"/><circle cx="168" cy="420" r="3"/><circle cx="132" cy="350" r="3"/><circle cx="172" cy="285" r="3"/><circle cx="140" cy="215" r="3"/>
+        <!-- front vertical edge -->
+        <line x1="150" y1="175" x2="150" y2="500" stroke="#D2FF3D" stroke-width="1.2" opacity="0.9" style="filter:drop-shadow(0 0 3px #B7F701)"/>
+
+        <!-- point cloud -->
+        <g fill="#B7F701" opacity="0.55">
+          <circle cx="120" cy="260" r="0.8"/><circle cx="105" cy="320" r="0.8"/><circle cx="135" cy="300" r="0.8"/><circle cx="118" cy="380" r="0.8"/>
+          <circle cx="100" cy="440" r="0.8"/><circle cx="128" cy="420" r="0.8"/><circle cx="112" cy="470" r="0.8"/>
+          <circle cx="180" cy="260" r="0.8"/><circle cx="195" cy="320" r="0.8"/><circle cx="170" cy="300" r="0.8"/><circle cx="188" cy="380" r="0.8"/>
+          <circle cx="200" cy="440" r="0.8"/><circle cx="175" cy="420" r="0.8"/><circle cx="192" cy="470" r="0.8"/>
         </g>
-        <circle cx="150" cy="545" r="3.5" fill="#B7F701"/><circle cx="155" cy="150" r="3.5" fill="#B7F701"/>
+
+        <!-- climb route on the front edge -->
+        <path d="M150 492 L131 440 L168 385 L134 320 L170 255 L150 185" stroke="#D2FF3D" stroke-width="1.3" fill="none" stroke-dasharray="3 3" opacity="0.85" style="filter:drop-shadow(0 0 4px #B7F701)"/>
+        <g fill="#050803" stroke="#B7F701" stroke-width="1.1">
+          <circle cx="131" cy="440" r="2.6"/><circle cx="168" cy="385" r="2.6"/><circle cx="134" cy="320" r="2.6"/><circle cx="170" cy="255" r="2.6"/>
+        </g>
+        <circle cx="150" cy="492" r="3" fill="#B7F701"/><circle cx="150" cy="185" r="3" fill="#B7F701"/>
+
+        <!-- vertex markers -->
+        <g fill="none" stroke="#D2FF3D" stroke-width="1">
+          <circle cx="150" cy="175" r="3"/><circle cx="92" cy="205" r="3"/><circle cx="208" cy="205" r="3"/>
+          <circle cx="92" cy="530" r="3"/><circle cx="208" cy="530" r="3"/><circle cx="150" cy="500" r="3"/>
+        </g>
+
+        <!-- ===== animated scan slice sweeping down ===== -->
+        <g opacity="0.9" style="filter:drop-shadow(0 0 6px #B7F701)">
+          <polygon points="150,175 92,205 150,235 208,205" fill="rgba(183,247,1,0.20)" stroke="#D2FF3D" stroke-width="2"/>
+          <animateTransform attributeName="transform" type="translate" from="0 0" to="0 295" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0;0.95;0.95;0" keyTimes="0;0.1;0.9;1" dur="3s" repeatCount="indefinite"/>
+        </g>
+
+        <!-- height dimension on far right -->
+        <g stroke="#B7F701" stroke-width="0.6" opacity="0.5">
+          <line x1="232" y1="205" x2="232" y2="500"/>
+          <line x1="228" y1="205" x2="236" y2="205"/><line x1="228" y1="500" x2="236" y2="500"/>
+        </g>
       </svg>
-      <div class="scanline"></div>
       <div class="scan-fc a"></div><div class="scan-fc b"></div><div class="scan-fc c"></div><div class="scan-fc d"></div>
       <div class="statusbar"><span>9:41</span><div class="ic">
         <svg width="15" height="9" viewBox="0 0 14 9"><path d="M1 8h1M3.5 6.5h1M6 5h1M8.5 3.5h1M11 2h1M1 8V8M3.5 8V6.5M6 8V5M8.5 8V3.5M11 8V2" stroke="#fff" stroke-width="1.4" stroke-linecap="round"/></svg>
         <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="18" height="9" rx="2" stroke="#fff" stroke-opacity="0.5"/><rect x="2" y="2" width="14" height="6" rx="1" fill="#fff"/></svg>
       </div></div>
       <div class="ph-head">
-        <div class="ph-eyebrow"><span class="pin">📍</span> BUILDING SCAN</div>
-        <div class="ph-title">Seoul Station <em>North Tower</em></div>
-        <div class="scan-loc">SEOUL · JUNG-GU · 37.555°N</div>
+        <div class="ph-eyebrow"><span class="pin">📍</span> 건물 스캔</div>
+        <div class="ph-title">서울역 <em>북측 타워</em></div>
+        <div class="scan-loc">서울 · 중구 · 37.555°N</div>
       </div>
-      <div class="scan-badge"><span class="d"></span> ANALYZING STRUCTURE</div>
+      <div class="scan-badge"><span class="d"></span> 3D 구조 분석 중</div>
       <div class="hud-rail left" style="top:182px">
-        <div class="hud-stat"><div class="k">HEIGHT</div><div class="v acc">128<small>m</small></div></div>
-        <div class="hud-stat"><div class="k">ROUTES</div><div class="v">5</div></div>
-        <div class="hud-stat"><div class="k">SUCCESS RATE</div><div class="v">72<small>%</small></div></div>
+        <div class="hud-stat"><div class="k">높이</div><div class="v acc">128<small>m</small></div></div>
+        <div class="hud-stat"><div class="k">루트</div><div class="v">5<small>개</small></div></div>
+        <div class="hud-stat"><div class="k">성공률</div><div class="v">72<small>%</small></div></div>
       </div>
       <div class="hud-rail right" style="top:182px">
-        <div class="hud-stat right-al"><div class="k">DIFFICULTY</div><div class="v"><span class="stars">★★★★<span class="off">★</span></span></div></div>
-        <div class="hud-stat right-al"><div class="k">EST. TIME</div><div class="v acc">45<small>min</small></div></div>
-        <div class="hud-stat right-al"><div class="k">SURFACE</div><div class="v" style="font-size:12px">Glass</div></div>
+        <div class="hud-stat right-al"><div class="k">난이도</div><div class="v"><span class="stars">★★★★<span class="off">★</span></span></div></div>
+        <div class="hud-stat right-al"><div class="k">예상 시간</div><div class="v acc">45<small>분</small></div></div>
+        <div class="hud-stat right-al"><div class="k">외벽</div><div class="v" style="font-size:12px">유리</div></div>
       </div>
-      <button class="cta-btn" data-act="next">ADD TO MY ROUTE <span class="ar">→</span></button>
+      <button class="cta-btn" data-act="next">내 루트에 추가 <span class="ar">→</span></button>
       <div class="tabbar" data-tabs></div>
     </div>
 
@@ -374,18 +421,18 @@ body{display:flex;align-items:center;justify-content:center;}
         <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="18" height="9" rx="2" stroke="#fff" stroke-opacity="0.5"/><rect x="2" y="2" width="14" height="6" rx="1" fill="#fff"/></svg>
       </div></div>
       <div class="ph-head">
-        <div class="ph-eyebrow">◆ URBAN ROUTE MAP</div>
-        <div class="ph-title">Seoul <em>Map</em></div>
+        <div class="ph-eyebrow">◆ 도시 루트 맵</div>
+        <div class="ph-title">서울 <em>탐험 맵</em></div>
       </div>
       <div class="map-legend">
-        <div class="lg"><b>●</b> Conquered</div>
-        <div class="lg"><b>▲</b> Scanned</div>
-        <div class="lg"><b>◇</b> Saved</div>
+        <div class="lg"><b>●</b> 정복 완료</div>
+        <div class="lg"><b>▲</b> 스캔 완료</div>
+        <div class="lg"><b>◇</b> 찜</div>
       </div>
       <div class="decode-stats">
-        <div class="ds"><div class="k">TOTAL CLIMBS</div><div class="v acc">24</div></div>
-        <div class="ds"><div class="k">TOTAL HEIGHT</div><div class="v">2,300<small>m</small></div></div>
-        <div class="ds"><div class="k">DISTRICTS</div><div class="v acc">12</div></div>
+        <div class="ds"><div class="k">총 등반</div><div class="v acc">24</div></div>
+        <div class="ds"><div class="k">총 높이</div><div class="v">2,300<small>m</small></div></div>
+        <div class="ds"><div class="k">지역</div><div class="v acc">12</div></div>
       </div>
       <div class="tabbar" data-tabs></div>
     </div>
@@ -424,15 +471,15 @@ body{display:flex;align-items:center;justify-content:center;}
       </div></div>
       <div class="rec"><span class="d"></span> REC</div>
       <div class="climb-time">12:47</div>
-      <div class="ar-tag" style="top:46%;left:30%">◇ NEXT HOLD</div>
+      <div class="ar-tag" style="top:46%;left:30%">◇ 다음 홀드</div>
       <div class="ar-tag" style="top:30%;left:58%">↑ 2.4m</div>
       <div class="climb-rail">
-        <div class="cstat"><div class="k">HEIGHT</div><div class="v acc">32<small>m</small></div></div>
-        <div class="cstat"><div class="k">SPEED</div><div class="v">1.2<small>m/s</small></div></div>
-        <div class="cstat"><div class="k">HEART</div><div class="v hr"><svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor"><path d="M8 14l-5.5-5.5a3.2 3.2 0 014.5-4.5L8 5l1-1a3.2 3.2 0 014.5 4.5L8 14z"/></svg>125</div></div>
+        <div class="cstat"><div class="k">현재 높이</div><div class="v acc">32<small>m</small></div></div>
+        <div class="cstat"><div class="k">상승 속도</div><div class="v">1.2<small>m/s</small></div></div>
+        <div class="cstat"><div class="k">심박수</div><div class="v hr"><svg width="11" height="11" viewBox="0 0 16 16" fill="currentColor"><path d="M8 14l-5.5-5.5a3.2 3.2 0 014.5-4.5L8 5l1-1a3.2 3.2 0 014.5 4.5L8 14z"/></svg>125</div></div>
       </div>
       <div class="climb-prog">
-        <div class="row"><span class="lbl">ROUTE PROGRESS</span><span class="pct">68%</span></div>
+        <div class="row"><span class="lbl">루트 진행률</span><span class="pct">68%</span></div>
         <div class="bar"><i></i></div>
       </div>
       <div class="tabbar" data-tabs></div>
@@ -446,11 +493,11 @@ body{display:flex;align-items:center;justify-content:center;}
         <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="18" height="9" rx="2" stroke="#fff" stroke-opacity="0.5"/><rect x="2" y="2" width="14" height="6" rx="1" fill="#fff"/></svg>
       </div></div>
       <div class="ph-head">
-        <div class="ph-eyebrow">◆ PERFORMANCE REVIEW</div>
-        <div class="ph-title">Today's <em>Climb</em></div>
+        <div class="ph-eyebrow">◆ 퍼포먼스 분석</div>
+        <div class="ph-title">오늘의 <em>등반</em></div>
       </div>
       <div class="replay-traj">
-        <span class="traj-badge">3D TRAJECTORY · REPLAY</span>
+        <span class="traj-badge">3D 궤적 · 리플레이</span>
         <svg viewBox="0 0 268 128" preserveAspectRatio="xMidYMid meet">
           <g stroke="rgba(255,255,255,0.06)" stroke-width="0.5"><line x1="20" y1="18" x2="248" y2="18"/><line x1="20" y1="64" x2="248" y2="64"/><line x1="20" y1="110" x2="248" y2="110"/></g>
           <path d="M40 112 C70 104 60 52 95 60 C130 68 120 26 160 34 C200 42 195 22 230 20" stroke="#B7F701" stroke-width="2" fill="none" style="filter:drop-shadow(0 0 4px #B7F701)"/>
@@ -460,18 +507,18 @@ body{display:flex;align-items:center;justify-content:center;}
         <div class="traj-play"><svg width="11" height="11" viewBox="0 0 12 12"><path d="M3 2l6 4-6 4V2z" fill="currentColor"/></svg></div>
       </div>
       <div class="replay-graphs">
-        <div class="gr"><span class="gk">SPEED</span><span class="gbar"><svg viewBox="0 0 230 16" preserveAspectRatio="none"><polyline points="0,13 25,9 50,11 75,5 100,8 125,4 150,6 175,5 200,7 230,3" fill="none" stroke="#B7F701" stroke-width="1.5"/></svg></span></div>
-        <div class="gr"><span class="gk">ALT</span><span class="gbar"><svg viewBox="0 0 230 16" preserveAspectRatio="none"><polyline points="0,14 25,13 50,11 75,10 100,7 125,6 150,5 175,4 200,3 230,2" fill="none" stroke="#D2FF3D" stroke-width="1.5"/></svg></span></div>
-        <div class="gr"><span class="gk">HEART</span><span class="gbar"><svg viewBox="0 0 230 16" preserveAspectRatio="none"><polyline points="0,9 20,8 40,10 55,4 70,11 90,7 110,9 130,3 150,10 170,6 190,9 210,5 230,8" fill="none" stroke="#ff4d4d" stroke-width="1.3"/></svg></span></div>
+        <div class="gr"><span class="gk">속도</span><span class="gbar"><svg viewBox="0 0 230 16" preserveAspectRatio="none"><polyline points="0,13 25,9 50,11 75,5 100,8 125,4 150,6 175,5 200,7 230,3" fill="none" stroke="#B7F701" stroke-width="1.5"/></svg></span></div>
+        <div class="gr"><span class="gk">고도</span><span class="gbar"><svg viewBox="0 0 230 16" preserveAspectRatio="none"><polyline points="0,14 25,13 50,11 75,10 100,7 125,6 150,5 175,4 200,3 230,2" fill="none" stroke="#D2FF3D" stroke-width="1.5"/></svg></span></div>
+        <div class="gr"><span class="gk">심박</span><span class="gbar"><svg viewBox="0 0 230 16" preserveAspectRatio="none"><polyline points="0,9 20,8 40,10 55,4 70,11 90,7 110,9 130,3 150,10 170,6 190,9 210,5 230,8" fill="none" stroke="#ff4d4d" stroke-width="1.3"/></svg></span></div>
       </div>
       <div class="replay-ai">
         <div class="grade">A+</div>
-        <div class="aih">AI ANALYSIS</div>
+        <div class="aih">AI 분석</div>
         <div class="ai-grid">
-          <div class="ai-cell"><div class="k">BEST PERFORMANCE</div><div class="v acc">14:23</div></div>
-          <div class="ai-cell"><div class="k">EFFICIENT MOVE</div><div class="v">Wall Transition</div></div>
-          <div class="ai-cell"><div class="k">STABILITY SCORE</div><div class="v big">89</div></div>
-          <div class="ai-cell"><div class="k">PERF. GRADE</div><div class="v big acc">A+</div></div>
+          <div class="ai-cell"><div class="k">최고 퍼포먼스</div><div class="v acc">14:23</div></div>
+          <div class="ai-cell"><div class="k">효율적 무브</div><div class="v">벽면 전환</div></div>
+          <div class="ai-cell"><div class="k">안정성 점수</div><div class="v big">89</div></div>
+          <div class="ai-cell"><div class="k">종합 등급</div><div class="v big acc">A+</div></div>
         </div>
       </div>
       <div class="tabbar" data-tabs></div>
@@ -485,17 +532,17 @@ body{display:flex;align-items:center;justify-content:center;}
         <svg width="22" height="10" viewBox="0 0 22 10"><rect x="0.5" y="0.5" width="18" height="9" rx="2" stroke="#fff" stroke-opacity="0.5"/><rect x="2" y="2" width="14" height="6" rx="1" fill="#fff"/></svg>
       </div></div>
       <div class="ph-head">
-        <div class="ph-eyebrow">◆ URBAN CONQUER FEED</div>
-        <div class="ph-title"><em>Community</em></div>
+        <div class="ph-eyebrow">◆ 도시 정복 피드</div>
+        <div class="ph-title"><em>커뮤니티</em></div>
       </div>
       <div class="comm-feed">
         <div class="challenge">
-          <div class="ck">THIS WEEK · CHALLENGE</div>
-          <div class="ct">Highest Climb This Week</div>
+          <div class="ck">이번 주 · 챌린지</div>
+          <div class="ct">이번 주 최고 높이</div>
           <span class="cr">🏆 TOP 10 · 348m</span>
         </div>
         <div class="fcard">
-          <div class="fc-user"><div class="fc-av"></div><div class="fc-un">@yuna.k <span class="dim">· Seoul</span></div><div class="fc-tm">2h ago</div></div>
+          <div class="fc-user"><div class="fc-av"></div><div class="fc-un">@yuna.k <span class="dim">· 서울</span></div><div class="fc-tm">2시간 전</div></div>
           <div class="fc-vid">
             <svg viewBox="0 0 300 188" preserveAspectRatio="xMidYMid slice">
               <defs><linearGradient id="cv1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c1712"/><stop offset="1" stop-color="#070504"/></linearGradient></defs>
@@ -506,7 +553,7 @@ body{display:flex;align-items:center;justify-content:center;}
             </svg>
             <div class="fc-playb"><svg width="13" height="13" viewBox="0 0 12 12"><path d="M3 2l6 4-6 4V2z" fill="#fff"/></svg></div>
             <div class="fc-score">93</div>
-            <div class="fc-vlabel"><div class="bn">Seoul Station North Tower</div><div class="diff">★★★★<span class="off">★</span></div></div>
+            <div class="fc-vlabel"><div class="bn">서울역 북측 타워</div><div class="diff">★★★★<span class="off">★</span></div></div>
           </div>
           <div class="fc-act">
             <div class="fa liked"><svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 14l-5.5-5.5a3.2 3.2 0 014.5-4.5L8 5l1-1a3.2 3.2 0 014.5 4.5L8 14z"/></svg>248</div>
@@ -515,7 +562,7 @@ body{display:flex;align-items:center;justify-content:center;}
           </div>
         </div>
         <div class="fcard">
-          <div class="fc-user"><div class="fc-av"></div><div class="fc-un">@minho <span class="dim">· Apgujeong</span></div><div class="fc-tm">5h ago</div></div>
+          <div class="fc-user"><div class="fc-av"></div><div class="fc-un">@minho <span class="dim">· 압구정</span></div><div class="fc-tm">5시간 전</div></div>
           <div class="fc-vid">
             <svg viewBox="0 0 300 188" preserveAspectRatio="xMidYMid slice">
               <defs><radialGradient id="cv2" cx="0.5" cy="0.1" r="0.5"><stop offset="0" stop-color="rgba(183,247,1,0.4)"/><stop offset="1" stop-color="rgba(183,247,1,0)"/></radialGradient></defs>
@@ -526,7 +573,7 @@ body{display:flex;align-items:center;justify-content:center;}
             </svg>
             <div class="fc-playb"><svg width="13" height="13" viewBox="0 0 12 12"><path d="M3 2l6 4-6 4V2z" fill="#fff"/></svg></div>
             <div class="fc-score">96</div>
-            <div class="fc-vlabel"><div class="bn">Apgujeong Skyline</div><div class="diff">★★★★★</div></div>
+            <div class="fc-vlabel"><div class="bn">압구정 스카이라인</div><div class="diff">★★★★★</div></div>
           </div>
           <div class="fc-act">
             <div class="fa"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M8 14l-5.5-5.5a3.2 3.2 0 014.5-4.5L8 5l1-1a3.2 3.2 0 014.5 4.5L8 14z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>1.2K</div>
@@ -542,9 +589,9 @@ body{display:flex;align-items:center;justify-content:center;}
 
   <!-- CONTROLS -->
   <div class="controls">
-    <button class="cbtn" id="prevBtn" title="Previous (←)"><svg width="13" height="13" viewBox="0 0 14 14"><path d="M9 3L5 7l4 4" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <button class="cbtn" id="prevBtn" title="이전 (←)"><svg width="13" height="13" viewBox="0 0 14 14"><path d="M9 3L5 7l4 4" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <div class="ccount"><span id="curNum">01</span> / 05</div>
-    <button class="cbtn primary" id="nextBtn" title="Next (→)"><svg width="13" height="13" viewBox="0 0 14 14"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <button class="cbtn primary" id="nextBtn" title="다음 (→)"><svg width="13" height="13" viewBox="0 0 14 14"><path d="M5 3l4 4-4 4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <div class="cdiv"></div>
     <span class="ckey">← →</span><span class="ckey">F</span>
   </div>
@@ -560,16 +607,16 @@ body{display:flex;align-items:center;justify-content:center;}
   fit(); addEventListener('resize', fit);
 
   const screens=[
-    {key:'scan', name:'01 SCAN', tag:'SCREEN 01 / SCAN', head:'Read the <em>City</em>.',
-     body:'Scan a building for height, routes and difficulty in real time.', hint:['Analyze Building →','Add to My Route']},
-    {key:'decode', name:'02 DECODE', tag:'SCREEN 02 / ROUTE MAP', head:'Plan the <em>Expedition</em>.',
-     body:'Log the city you discovered as a collection on the map.', hint:['Select a Pin →','Start Climb']},
-    {key:'climb', name:'03 CLIMBING', tag:'SCREEN 03 / LIVE', head:'Climb the <em>City</em>.',
-     body:'Overlay AR routes and body data on the live POV camera.', hint:['Live HUD','Review Stats →']},
-    {key:'replay', name:'04 REPLAY', tag:'SCREEN 04 / REVIEW', head:'Review <em>Today</em>.',
-     body:'Review performance with the 3D trajectory and AI analysis.', hint:['Replay Trajectory','Share to Feed →']},
-    {key:'community', name:'05 COMMUNITY', tag:'SCREEN 05 / COMMUNITY', head:'Share the <em>Climb</em>.',
-     body:'Share conquered buildings to the feed and join challenges.', hint:['← Back to Start','New Scan']},
+    {key:'scan', name:'01 SCAN', tag:'화면 01 / 스캔', head:'도시를 <em>읽다</em>.',
+     body:'건물을 3D로 스캔해 높이·루트·난이도를 실시간 분석합니다.', hint:['건물 분석 →','내 루트에 추가']},
+    {key:'decode', name:'02 DECODE', tag:'화면 02 / 루트 맵', head:'<em>탐험</em>을 설계하다.',
+     body:'발견한 도시를 컬렉션처럼 지도 위에 기록합니다.', hint:['핀 선택 →','등반 시작']},
+    {key:'climb', name:'03 CLIMBING', tag:'화면 03 / 라이브', head:'도시를 <em>오르다</em>.',
+     body:'POV 카메라 위에 AR 루트와 신체 데이터를 중첩합니다.', hint:['실시간 HUD','기록 분석 →']},
+    {key:'replay', name:'04 REPLAY', tag:'화면 04 / 분석', head:'오늘을 <em>복기하다</em>.',
+     body:'3D 궤적과 AI 분석으로 퍼포먼스를 리뷰합니다.', hint:['궤적 재생','피드 공유 →']},
+    {key:'community', name:'05 COMMUNITY', tag:'화면 05 / 커뮤니티', head:'경험을 <em>나누다</em>.',
+     body:'정복한 도시를 피드로 공유하고 챌린지에 참여합니다.', hint:['← 처음으로','새 스캔']},
   ];
 
   const panels=[...canvas.querySelectorAll('.panel')];
@@ -582,11 +629,11 @@ body{display:flex;align-items:center;justify-content:center;}
 
   /* shared tab bar markup injected into each panel */
   const TABS=[
-    {go:0,label:'SCAN',svg:'<rect x="3" y="5" width="14" height="11" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="10.5" r="3" stroke="currentColor" stroke-width="1.5"/>'},
-    {go:1,label:'MAP',svg:'<path d="M3 4l5 2 4-2 5 2v12l-5-2-4 2-5-2V4z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>'},
-    {go:2,label:'CLIMB',svg:'<path d="M10 3v8m0 0l-3-3m3 3l3-3M5 15h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'},
-    {go:3,label:'STATS',svg:'<path d="M4 16V9M9 16V4M14 16v-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>'},
-    {go:4,label:'FEED',svg:'<circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M4 17c0-3 2.5-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>'},
+    {go:0,label:'스캔',svg:'<rect x="3" y="5" width="14" height="11" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="10.5" r="3" stroke="currentColor" stroke-width="1.5"/>'},
+    {go:1,label:'맵',svg:'<path d="M3 4l5 2 4-2 5 2v12l-5-2-4 2-5-2V4z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>'},
+    {go:2,label:'등반',svg:'<path d="M10 3v8m0 0l-3-3m3 3l3-3M5 15h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>'},
+    {go:3,label:'기록',svg:'<path d="M4 16V9M9 16V4M14 16v-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>'},
+    {go:4,label:'피드',svg:'<circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M4 17c0-3 2.5-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>'},
   ];
   panels.forEach((panel,pi)=>{
     const bar=panel.querySelector('[data-tabs]');
